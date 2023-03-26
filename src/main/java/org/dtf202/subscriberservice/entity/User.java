@@ -7,6 +7,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -27,11 +31,28 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "First Name is required")
     private String firstName;
+
+    @NotBlank(message = "Last Name is required")
     private String lastName;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    @Column(unique = true)
     private String email;
+
     @Column(columnDefinition = "TEXT")
+    @NotBlank(message = "Password is required")
     private String password;
+    @OneToOne
+    private UserRef parentRef;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime registeredDateTime;
+
+    private Double totalBalance;
     private Boolean isDeleted = false;
     private Boolean isActive = true;
     @ManyToOne
