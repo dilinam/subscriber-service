@@ -9,6 +9,7 @@ import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -37,8 +39,7 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> emailVerification(@PathVariable String verificationToken) {
 
         try {
-            authService.verifyUserAndCreate(verificationToken);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return ResponseEntity.ok(authService.verifyUserAndCreate(verificationToken));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
