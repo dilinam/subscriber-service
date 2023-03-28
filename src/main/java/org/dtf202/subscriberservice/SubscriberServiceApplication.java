@@ -2,7 +2,9 @@ package org.dtf202.subscriberservice;
 
 import org.dtf202.subscriberservice.entity.Role;
 import org.dtf202.subscriberservice.entity.User;
+import org.dtf202.subscriberservice.entity.UserRef;
 import org.dtf202.subscriberservice.repository.RoleRepository;
+import org.dtf202.subscriberservice.repository.UserRefRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,6 +21,8 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 	private RoleRepository roleRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private UserRefRepository userRefRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SubscriberServiceApplication.class, args);
@@ -51,10 +55,16 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 				.role(roleUser)
 				.build();
 
+			UserRef userRef = UserRef.builder()
+					.ref("TESTUSERREF")
+						.user(user)
+							.build();
+
 			roleRepository.save(roleAdmin);
 			roleRepository.save(roleUser);
 			userRepository.save(userAdmin);
 			userRepository.save(user);
+			userRefRepository.save(userRef);
 		}
 	}
 }

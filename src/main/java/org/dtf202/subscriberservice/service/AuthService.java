@@ -42,7 +42,7 @@ public class AuthService {
 
     private final static Map<String, User> UNVERIFIED_USERS = new HashMap<>();
 
-    public void register(User user) {
+    public void register(User user) throws Exception {
 
         if(userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new IllegalArgumentException();
@@ -54,6 +54,13 @@ public class AuthService {
         user.setIsActive(true);
         user.setRegisteredDateTime(LocalDateTime.now());
         user.setTotalBalance(0.0);
+
+        if(user.getParentRef() != null) {
+            UserRef parentRef = userRefRepository.findById(user.getParentRef().getRef())
+                .orElseThrow(() -> new Exception("Ref not found"));
+            user.setParentRef(parentRef);
+        }
+
         String verificationToken = stringHelpers.generateRandomStringUsingEmail(user.getEmail());
         UNVERIFIED_USERS.put(verificationToken, user);
 

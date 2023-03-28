@@ -32,6 +32,8 @@ public class AuthController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(Map.of("email", "Email exists"));
+        }catch (Exception ex) {
+            return ResponseEntity.badRequest().body(Map.of("userRef", "User ref not exists"));
         }
     }
 
