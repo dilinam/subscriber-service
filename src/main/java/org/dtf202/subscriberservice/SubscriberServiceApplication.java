@@ -1,5 +1,6 @@
 package org.dtf202.subscriberservice;
 
+import java.time.LocalDateTime;
 import org.dtf202.subscriberservice.entity.Role;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.entity.UserRef;
@@ -43,6 +44,8 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 				.isDeleted(false)
 				.isActive(true)
 				.role(roleAdmin)
+				.registeredDateTime(LocalDateTime.now())
+				.totalBalance(0.0)
 				.build();
 
 			User user = User.builder()
@@ -53,6 +56,8 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 				.isDeleted(false)
 				.isActive(true)
 				.role(roleUser)
+				.registeredDateTime(LocalDateTime.now())
+				.totalBalance(0.0)
 				.build();
 
 			UserRef userRef = UserRef.builder()

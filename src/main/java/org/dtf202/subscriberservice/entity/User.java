@@ -1,5 +1,7 @@
 package org.dtf202.subscriberservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.dtf202.subscriberservice.utils.CustomAuthorityDeserializer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,6 +48,7 @@ public class User implements UserDetails {
 
     @Column(columnDefinition = "TEXT")
     @NotBlank(message = "Password is required")
+    @JsonIgnore
     private String password;
     @OneToOne
     private UserRef parentRef;
@@ -60,6 +64,7 @@ public class User implements UserDetails {
     private Role role;
 
     @Override
+    @JsonDeserialize(using = CustomAuthorityDeserializer.class)
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getName()));
     }
@@ -76,7 +81,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return isActive;
+        return isActive && !isDeleted;
     }
 
     @Override
