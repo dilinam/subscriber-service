@@ -47,7 +47,6 @@ public class User implements UserDetails {
     private String email;
 
     @Column(columnDefinition = "TEXT")
-    @NotBlank(message = "Password is required")
     @JsonIgnore
     private String password;
     @OneToOne
