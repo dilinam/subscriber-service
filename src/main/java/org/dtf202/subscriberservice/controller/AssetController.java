@@ -33,7 +33,7 @@ public class AssetController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/Recharges/{id}")
+    @GetMapping("/Recharge/{id}")
     public ResponseEntity<List<Assets>> getAllRechargesByUserId(@PathVariable long id) {
         try {
             return ResponseEntity.ok(assetsService.getAllRechargesByUserId(id));

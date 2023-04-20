@@ -37,10 +37,10 @@ public class AssetsService {
 
     }
     public List<Assets> getAllNotAcceptedWithdrawals(){
-        return assetsRepository.findAllByIsAccepted("Recharge");
+        return assetsRepository.findAllByIsNotAccepted("Recharge");
     }
     public List<Assets> getAllNotAcceptedRecharge(){
-        return assetsRepository.findAllByIsAccepted("Withdrawal");
+        return assetsRepository.findAllByIsNotAccepted("Withdrawal");
     }
     public List<Assets> getAllRevenueByDate(LocalDateTime date){
         return assetsRepository.findAllByDateTimeGreaterThanEqualAndPaymentTypeType(date,"Revenue");

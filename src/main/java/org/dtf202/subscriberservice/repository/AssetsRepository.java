@@ -16,7 +16,7 @@ public interface AssetsRepository extends JpaRepository<Assets,Long> {
 
     List<Assets> findAllByUserIdAndPaymentTypeType(Long id,String type);
     @Query("SELECT Assets From Assets assets where assets.paymentType.type = ?1 and not assets.isAccepted")
-    List<Assets> findAllByIsAccepted(String type);
+    List<Assets> findAllByIsNotAccepted(String type);
 
     List<Assets> findAllByDateTimeGreaterThanEqualAndPaymentTypeType(LocalDateTime dateTime,String type);
 
