@@ -30,9 +30,6 @@ public class UserPackage {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime expireDateTime;
 
-    @OneToOne
-    private Payment payment;
-
     private Boolean status;
 
     @ManyToOne

@@ -1,8 +1,6 @@
 package org.dtf202.subscriberservice.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,9 +14,15 @@ import lombok.NoArgsConstructor;
 public class UserRef {
 
     @Id
-    private String ref;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @OneToOne
+    @ManyToOne
     private User user;
+
+    @ManyToOne
+    private Ref ref;
+
+    private Integer level;
 
 }

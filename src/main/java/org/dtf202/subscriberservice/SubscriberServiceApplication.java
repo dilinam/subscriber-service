@@ -1,6 +1,8 @@
 package org.dtf202.subscriberservice;
 
 import java.time.LocalDateTime;
+
+import org.dtf202.subscriberservice.entity.Ref;
 import org.dtf202.subscriberservice.entity.Role;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.entity.UserRef;
@@ -60,10 +62,8 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 				.totalBalance(0.0)
 				.build();
 
-			UserRef userRef = UserRef.builder()
-					.ref("TESTUSERREF")
-						.user(user)
-							.build();
+			Ref ref = Ref.builder().isActive(false).build();
+			UserRef userRef = UserRef.builder().ref(ref).user(user).level(0).build();
 
 			roleRepository.save(roleAdmin);
 			roleRepository.save(roleUser);

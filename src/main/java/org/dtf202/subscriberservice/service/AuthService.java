@@ -3,12 +3,16 @@ package org.dtf202.subscriberservice.service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.config.JwtService;
 import org.dtf202.subscriberservice.dto.AuthenticationRequest;
 import org.dtf202.subscriberservice.dto.AuthenticationResponse;
+import org.dtf202.subscriberservice.entity.Ref;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.entity.UserRef;
+import org.dtf202.subscriberservice.repository.RefRepository;
 import org.dtf202.subscriberservice.repository.RoleRepository;
 import org.dtf202.subscriberservice.repository.UserRefRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
@@ -55,12 +59,6 @@ public class AuthService {
         user.setRegisteredDateTime(LocalDateTime.now());
         user.setTotalBalance(0.0);
 
-        if(user.getParentRef() != null) {
-            UserRef parentRef = userRefRepository.findById(user.getParentRef().getRef())
-                .orElseThrow(() -> new Exception("Ref not found"));
-            user.setParentRef(parentRef);
-        }
-
         String verificationToken = stringHelpers.generateRandomStringUsingEmail(user.getEmail());
         UNVERIFIED_USERS.put(verificationToken, user);
 
@@ -90,9 +88,8 @@ public class AuthService {
         userRepository.save(user);
 
         // create ref id for user
-        String ref = stringHelpers.generateRandomStringUsingEmail(user.getEmail());
-        UserRef userRef = UserRef.builder().user(user).ref(ref).build();
-        userRefRepository.save(userRef);
+        Ref ref = Ref.builder().isActive(false).build();
+        UserRef.builder().ref(ref).user(user).level(0).build();
 
         // generate token
         String jwtToken = jwtService.generateToken(user);

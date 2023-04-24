@@ -51,11 +51,10 @@ public class AssetsService {
 
     }
 
-    public void save(Assets assets,Long id,Integer idT){
+    public void save(Assets assets,Integer id){
         if (assets.getIsAccepted()){
-            Optional<User> user = userRepository.findById(id);
-            Optional<PaymentType> paymentType = paymentTypeRepository.findById(idT);
-            assets.setUser(user.get());
+            Optional<PaymentType> paymentType = paymentTypeRepository.findById(id);
+            assets.setIsAccepted(false);
             assets.setPaymentType(paymentType.get());
             assetsRepository.save(assets);
         }

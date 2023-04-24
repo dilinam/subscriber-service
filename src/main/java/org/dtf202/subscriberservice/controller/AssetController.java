@@ -66,10 +66,10 @@ public class AssetController {
         }
     }
 
-    @PostMapping("/{id}/{idT}")
-    public ResponseEntity<?> AddNewAsset(@Valid @RequestBody Assets asset, @PathVariable Long id,@PathVariable Integer idT ){
+    @PostMapping("/{id}")
+    public ResponseEntity<?> AddNewAsset(@Valid @RequestBody Assets asset,@PathVariable Integer id ){
         try {
-            assetsService.save(asset,id,idT);
+            assetsService.save(asset,id);
             return ResponseEntity.ok().build();
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();

@@ -26,12 +26,11 @@ public class AdminActionService {
     public List<Assets> getAllNotAcceptedWithdrawals(){
         return assetsRepository.findAllByIsNotAccepted("Withdrawal");
     }
-    public void acceptUserRequest(Assets asset,Long id){
+    public void acceptUserRequest(Assets asset){
         asset.setIsAccepted(true);
-        Optional<User> user = userRepository.findById(id);
-        Double balance = user.get().getTotalBalance();
+        Double balance = asset.getUser().getTotalBalance();
         Double totalBalance = balance + asset.getAmount();
-        user.get().setTotalBalance(totalBalance);
+        asset.getUser().setTotalBalance(totalBalance);
         assetsRepository.save(asset);
     }
     @Transactional
@@ -39,6 +38,13 @@ public class AdminActionService {
         Optional<User> user = userRepository.findById(id);
         user.get().setIsDeleted(true);
         userRepository.save(user.get());
+    }
+
+    public void acceptAllusers(List<Long> idList){
+        for (Long id:idList) {
+            Optional<Assets> assets =  assetsRepository.findById(id);
+            assets.ifPresent(value -> value.setIsAccepted(true));
+        }
     }
 
 }

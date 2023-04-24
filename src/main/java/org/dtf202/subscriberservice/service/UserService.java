@@ -1,8 +1,14 @@
 package org.dtf202.subscriberservice.service;
 
 import java.util.Map;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
+import org.dtf202.subscriberservice.entity.Ref;
 import org.dtf202.subscriberservice.entity.User;
+import org.dtf202.subscriberservice.entity.UserRef;
+import org.dtf202.subscriberservice.repository.UserPackageRepository;
+import org.dtf202.subscriberservice.repository.UserRefRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserRefRepository userRefRepository;
 
     public Map<String, Object> getAllUsers(int pageNumber, int pageSize, String globalFilter) {
         Page<User> userPage = userRepository
@@ -39,6 +46,17 @@ public class UserService {
         user.setFirstName(editingUser.getFirstName());
         user.setLastName(editingUser.getLastName());
         userRepository.save(user);
+    }
+    public Double getTotalBal(Long id) throws Exception {
+        return userRepository.findById(id).orElseThrow(() -> new Exception("User not found")).getTotalBalance();
+    }
+
+    public Double checkBonus(Long id){
+        Optional<User> user = userRepository.findById(id);
+        Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user.get(),0);
+        Ref ref = userRef.get().getRef();
+        Long refId = ref.getId();
+        return userRefRepository.getCountOfRef(refId);
     }
 
 }

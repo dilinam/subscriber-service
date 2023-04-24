@@ -56,5 +56,23 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/total/{id}")
+    public ResponseEntity<Double> getTotalBalance(@PathVariable long id){
+        try {
+            return ResponseEntity.ok(userService.getTotalBal(id));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/l1count/{id}")
+    public ResponseEntity<Double> getLevel1UsersCount(@PathVariable long id){
+        try {
+            return ResponseEntity.ok(userService.checkBonus(id));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 }
