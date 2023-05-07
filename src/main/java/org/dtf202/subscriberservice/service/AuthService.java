@@ -36,6 +36,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final UserRefRepository userRefRepository;
+    private final RefRepository refRepository;
     private final StringHelpers stringHelpers;
 
     @Value("${spring.mail.noreply}")
@@ -89,7 +90,26 @@ public class AuthService {
 
         // create ref id for user
         Ref ref = Ref.builder().isActive(false).build();
-        UserRef.builder().ref(ref).user(user).level(0).build();
+        refRepository.save(ref);
+
+        UserRef userRef = UserRef.builder().ref(ref).user(user).level(0).build();
+        userRefRepository.save(userRef);
+
+        if(!userRef.getRef().getIsActive()){
+            if(user.getParentRef() != null) {
+                Optional<Ref> ref1 = refRepository.findById(user.getParentRef());
+                if(ref1.isPresent()){
+                    UserRef userRef1 = userRefRepository.findAllByRef(ref1.get()).get();
+                    UserRef.builder().user(user).ref(ref1.get()).level(1).build();
+                    Optional<UserRef> userRef2 = userRefRepository.findAllByUserAndLevel(userRef1.getUser(),1);
+                    if (userRef2.isPresent()){
+                        UserRef.builder().user(user).ref(userRef2.get().getRef()).level(2).build();
+                        Optional<UserRef> userRef3 = userRefRepository.findAllByUserAndLevel(userRef2.get().getUser(),1);
+                        userRef3.ifPresent(userRefTemp -> UserRef.builder().user(user).ref(userRefTemp.getRef()).level(3).build());
+                    }}
+            }
+            userRef.getRef().setIsActive(true);
+        }
 
         // generate token
         String jwtToken = jwtService.generateToken(user);

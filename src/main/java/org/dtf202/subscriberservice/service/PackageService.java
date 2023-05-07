@@ -46,27 +46,6 @@ public class PackageService {
         user.setTotalBalance(user.getTotalBalance() - pkg.getPrice());
         userRepository.save(user);
 
-        UserRef ur = userRefRepository.findAllByUser(user).get();
-
-        if(!ur.getRef().getIsActive()){
-            if(user.getParentRef() != null) {
-                Optional<Ref> ref1 = refRepository.findById(user.getParentRef());
-                if(ref1.isPresent()){
-                    UserRef userRef1 = userRefRepository.findAllByRef(ref1.get()).get();
-                    UserRef.builder().user(user).ref(ref1.get()).level(1).build();
-                    Optional<UserRef> userRef2 = userRefRepository.findAllByUserAndLevel(userRef1.getUser(),1);
-                    if (userRef2.isPresent()){
-                        UserRef.builder().user(user).ref(userRef2.get().getRef()).level(2).build();
-                        Optional<UserRef> userRef3 = userRefRepository.findAllByUserAndLevel(userRef2.get().getUser(),1);
-                        userRef3.ifPresent(userRef -> UserRef.builder().user(user).ref(userRef.getRef()).level(3).build());
-                    }}
-            }
-            ur.getRef().setIsActive(true);
-        }
-
-
-        //setRefToUsers
-
         UserPackage userPackage = UserPackage.builder()
             .activePackage(pkg)
             .user(user)
