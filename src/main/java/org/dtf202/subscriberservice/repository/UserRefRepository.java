@@ -11,11 +11,13 @@ import java.util.Optional;
 
 public interface UserRefRepository extends JpaRepository<UserRef, Long> {
 
-    Optional<UserRef> findAllByRef(Ref ref);
+    List<UserRef> findAllByRef(Ref ref);
+
+    Optional<UserRef> findAllByRefAndUser(Ref ref,User user);
     Optional<UserRef> findAllByUser(User user);
 
     Optional<UserRef> findAllByUserAndLevel(User user,Integer level);
     @Query("Select count(*) from UserRef userRef Where userRef.ref.id = ?1 and userRef.level = 1" )
-    Double getCountOfRef(Long refId);
+    Integer getCountOfRef(Long refId);
 
 }

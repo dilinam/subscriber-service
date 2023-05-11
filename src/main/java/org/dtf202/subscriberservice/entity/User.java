@@ -42,7 +42,6 @@ public class User implements UserDetails {
     private String email;
 
     @Column(columnDefinition = "TEXT")
-    @JsonIgnore
     private String password;
 
     @Column(columnDefinition = "TIMESTAMP")

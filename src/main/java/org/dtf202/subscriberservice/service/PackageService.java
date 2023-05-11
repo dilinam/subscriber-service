@@ -23,6 +23,8 @@ public class PackageService {
     private final PaymentTypeRepository paymentTypeRepository;
     private final JwtService jwtService;
     private final RefRepository refRepository;
+    private final BonusTypeRepository bonusTypeRepository;
+    private final UserBonusRepository userBonusRepository;
 
     public List<Package> getAllPackages() {
         return packageRepository.findAllByIsActive(true);
@@ -31,7 +33,6 @@ public class PackageService {
     public Package getPackageById(int id) throws Exception {
         return packageRepository.findById(id).orElseThrow(() -> new Exception("Package not found"));
     }
-
     @Transactional
     public void createUserPackage(int id, String token) throws Exception {
 
@@ -46,17 +47,19 @@ public class PackageService {
         user.setTotalBalance(user.getTotalBalance() - pkg.getPrice());
         userRepository.save(user);
 
-        UserRef ur = userRefRepository.findAllByUser(user).get();
+        UserRef ur = userRefRepository.findAllByUser(user).orElseThrow(() -> new Exception("User ref not found"));
 
         if(!ur.getRef().getIsActive()){
             if(user.getParentRef() != null) {
                 Optional<Ref> ref1 = refRepository.findById(user.getParentRef());
                 if(ref1.isPresent()){
-                    UserRef userRef1 = userRefRepository.findAllByRef(ref1.get()).get();
-                    UserRef.builder().user(user).ref(ref1.get()).level(1).build();
+                    UserRef userRef1 = userRefRepository.findAllByRefAndUser(ref1.get(),user).get();
+                    UserRef userRefLevel1 = UserRef.builder().user(user).ref(ref1.get()).level(1).build();
+                    userRefRepository.save(userRefLevel1);
                     Optional<UserRef> userRef2 = userRefRepository.findAllByUserAndLevel(userRef1.getUser(),1);
                     if (userRef2.isPresent()){
-                        UserRef.builder().user(user).ref(userRef2.get().getRef()).level(2).build();
+                        UserRef userRefLevel2 =UserRef.builder().user(user).ref(userRef2.get().getRef()).level(2).build();
+                        userRefRepository.save(userRefLevel2);
                         Optional<UserRef> userRef3 = userRefRepository.findAllByUserAndLevel(userRef2.get().getUser(),1);
                         userRef3.ifPresent(userRef -> UserRef.builder().user(user).ref(userRef.getRef()).level(3).build());
                     }}

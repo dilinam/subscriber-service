@@ -14,8 +14,8 @@ import java.util.List;
 @RequestMapping("/api/adminAction")
 public class AdminActionController {
     private final AdminActionService adminActionService;
-    @DeleteMapping
-    public ResponseEntity<?> deleteUser(@Valid @RequestBody Long id) {
+    @DeleteMapping ("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
             adminActionService.deleteUser(id);
             return ResponseEntity.ok().build();

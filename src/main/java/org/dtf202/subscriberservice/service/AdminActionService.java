@@ -20,30 +20,43 @@ public class AdminActionService {
     private final PaymentTypeRepository paymentTypeRepository;
 
     public List<Assets> getAllNotAcceptedRecharges(){
-        return assetsRepository.findAllByIsNotAccepted("Recharge");
+        return assetsRepository.findAllByIsNotAccepted(2);
     }
 
     public List<Assets> getAllNotAcceptedWithdrawals(){
-        return assetsRepository.findAllByIsNotAccepted("Withdrawal");
+        return assetsRepository.findAllByIsNotAccepted(1);
     }
     public void acceptUserRequest(Assets asset){
         asset.setIsAccepted(true);
         Double balance = asset.getUser().getTotalBalance();
         Double totalBalance = balance + asset.getAmount();
-        asset.getUser().setTotalBalance(totalBalance);
+        User user = userRepository.findById(asset.getUser().getId()).orElseThrow(() -> new RuntimeException("not found user"));
+        user.setTotalBalance(totalBalance);
+        userRepository.save(user);
         assetsRepository.save(asset);
     }
     @Transactional
     public void deleteUser(Long id){
         Optional<User> user = userRepository.findById(id);
-        user.get().setIsDeleted(true);
-        userRepository.save(user.get());
+        if(user.isPresent()){
+            user.get().setIsDeleted(true);
+            userRepository.save(user.get());
+        }
     }
 
     public void acceptAllusers(List<Long> idList){
         for (Long id:idList) {
-            Optional<Assets> assets =  assetsRepository.findById(id);
-            assets.ifPresent(value -> value.setIsAccepted(true));
+            Optional<Assets> asset =  assetsRepository.findById(id);
+            if (asset.isPresent()){
+                asset.get().setIsAccepted(true);
+                Double balance = asset.get().getUser().getTotalBalance();
+                Double totalBalance = balance + asset.get().getAmount();
+                User user = userRepository.findById(asset.get().getUser().getId()).orElseThrow(() -> new RuntimeException("not found user"));
+                user.setTotalBalance(totalBalance);
+                userRepository.save(user);
+                assetsRepository.save(asset.get());
+            }
+
         }
     }
 

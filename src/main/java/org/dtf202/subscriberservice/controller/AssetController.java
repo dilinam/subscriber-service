@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/Assets")
@@ -57,21 +57,31 @@ public class AssetController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/Revenue/{date}")
-    public ResponseEntity<List<Assets>> getAllRevenue(@PathVariable LocalDateTime date) {
+    @GetMapping("/Revenue/user/{id}")
+    public ResponseEntity<List<Assets>> getAllRevenueUser(@PathVariable long id) {
         try {
-            return ResponseEntity.ok(assetsService.getAllRevenueByDate(date));
+            return ResponseEntity.ok(assetsService.getAllRevenueByUser(id));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<?> AddNewAsset(@Valid @RequestBody Assets asset,@PathVariable Integer id ){
+    @GetMapping("/Revenue/{timestamp}")
+    public ResponseEntity<List<Assets>> getAllRevenue(@PathVariable long timestamp) {
         try {
-            assetsService.save(asset,id);
+            return ResponseEntity.ok(assetsService.getAllRevenueByDate(timestamp));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/{id}/{amount}")
+    public ResponseEntity<?> AddNewAsset(@Valid @RequestBody User user,@PathVariable Integer id,@PathVariable Double amount){
+        try {
+            assetsService.save(user,id,amount);
             return ResponseEntity.ok().build();
         } catch(Exception ex) {
+            System.out.println(ex);
             return ResponseEntity.notFound().build();
         }
     }

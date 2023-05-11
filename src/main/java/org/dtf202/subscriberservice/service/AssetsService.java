@@ -9,9 +9,11 @@ import org.dtf202.subscriberservice.repository.PaymentTypeRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 
 @Service
@@ -37,13 +39,17 @@ public class AssetsService {
 
     }
     public List<Assets> getAllNotAcceptedWithdrawals(){
-        return assetsRepository.findAllByIsNotAccepted("Recharge");
+        return assetsRepository.findAllByIsNotAccepted(2);
     }
     public List<Assets> getAllNotAcceptedRecharge(){
-        return assetsRepository.findAllByIsNotAccepted("Withdrawal");
+        return assetsRepository.findAllByIsNotAccepted(1);
     }
-    public List<Assets> getAllRevenueByDate(LocalDateTime date){
-        return assetsRepository.findAllByDateTimeGreaterThanEqualAndPaymentTypeType(date,"Revenue");
+    public List<Assets> getAllRevenueByDate(long timestamp){
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), TimeZone.getDefault().toZoneId());
+
+        List<Assets> rev = assetsRepository.findAllByDateTimeGreaterThanEqualAndPaymentTypeType(localDateTime,"Revenue");
+
+        return rev;
 
     }
     public List<Assets> getAllRefByUser(Long id){
@@ -51,13 +57,21 @@ public class AssetsService {
 
     }
 
-    public void save(Assets assets,Integer id){
-        if (assets.getIsAccepted()){
-            Optional<PaymentType> paymentType = paymentTypeRepository.findById(id);
-            assets.setIsAccepted(false);
-            assets.setPaymentType(paymentType.get());
-            assetsRepository.save(assets);
+    public List<Assets> getAllRevenueByUser(Long id){
+        return assetsRepository.findAllByUserIdAndPaymentTypeType(id,"Revenue");
+
+    }
+
+    public void save(User user,Integer id,Double amount){
+        Optional<PaymentType> paymentType = paymentTypeRepository.findById(id);
+        Assets assets;
+        if (id == 1 && paymentType.isPresent()){
+            assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(false).user(user).amount(-amount).paymentType(paymentType.get()).build();
+        }else{
+            assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(false).user(user).amount(amount).paymentType(paymentType.get()).build();
         }
+
+        assetsRepository.save(assets);
     }
 
 }

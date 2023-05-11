@@ -24,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,7 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final UserRefRepository userRefRepository;
     private final StringHelpers stringHelpers;
+    private final RefRepository refRepository;
 
     @Value("${spring.mail.noreply}")
     private String noReplyEMail;
@@ -78,6 +80,7 @@ public class AuthService {
         emailThread.start();
     }
 
+//    @Transactional
     public AuthenticationResponse verifyUserAndCreate(String verificationToken) throws Exception {
         User user = UNVERIFIED_USERS.remove(verificationToken);
 
@@ -89,7 +92,10 @@ public class AuthService {
 
         // create ref id for user
         Ref ref = Ref.builder().isActive(false).build();
-        UserRef.builder().ref(ref).user(user).level(0).build();
+        refRepository.save(ref);
+        UserRef userRef = UserRef.builder().ref(ref).user(user).level(0).build();
+        userRefRepository.save(userRef);
+
 
         // generate token
         String jwtToken = jwtService.generateToken(user);

@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 public class Assets {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @FutureOrPresent
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime dateTime;
 
