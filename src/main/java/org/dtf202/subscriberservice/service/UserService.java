@@ -84,6 +84,13 @@ public class UserService {
 
 
     }
+    public Long getRefID(User user){
+        Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
+        Ref ref = userRef.get().getRef();
+
+        return ref.getId();
+
+    }
 }
 
 

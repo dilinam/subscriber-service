@@ -94,6 +94,15 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/getreflink")
+    public ResponseEntity<?> getRef(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getRefID(user));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
 }

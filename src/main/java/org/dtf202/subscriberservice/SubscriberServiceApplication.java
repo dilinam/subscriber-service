@@ -6,6 +6,7 @@ import org.dtf202.subscriberservice.entity.Ref;
 import org.dtf202.subscriberservice.entity.Role;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.entity.UserRef;
+import org.dtf202.subscriberservice.repository.RefRepository;
 import org.dtf202.subscriberservice.repository.RoleRepository;
 import org.dtf202.subscriberservice.repository.UserRefRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
@@ -26,6 +27,8 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private UserRefRepository userRefRepository;
+	@Autowired
+	private RefRepository refRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SubscriberServiceApplication.class, args);
@@ -69,6 +72,7 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 			roleRepository.save(roleUser);
 			userRepository.save(userAdmin);
 			userRepository.save(user);
+			refRepository.save(ref);
 			userRefRepository.save(userRef);
 		}
 	}

@@ -96,6 +96,24 @@ public class AuthService {
         UserRef userRef = UserRef.builder().ref(ref).user(user).level(0).build();
         userRefRepository.save(userRef);
 
+        if(!ref.getIsActive()){
+            if(user.getParentRef() != null) {
+                Optional<Ref> ref1 = refRepository.findById(user.getParentRef());
+                if(ref1.isPresent()){
+                    UserRef userRef1 = userRefRepository.findAllByRefAndUser(ref1.get(),user).get();
+                    UserRef userRefLevel1 = UserRef.builder().user(user).ref(ref1.get()).level(1).build();
+                    userRefRepository.save(userRefLevel1);
+                    Optional<UserRef> userRef2 = userRefRepository.findAllByUserAndLevel(userRef1.getUser(),1);
+                    if (userRef2.isPresent()){
+                        UserRef userRefLevel2 =UserRef.builder().user(user).ref(userRef2.get().getRef()).level(2).build();
+                        userRefRepository.save(userRefLevel2);
+                        Optional<UserRef> userRef3 = userRefRepository.findAllByUserAndLevel(userRef2.get().getUser(),1);
+                        userRef3.ifPresent(userRef4 -> UserRef.builder().user(user).ref(userRef4.getRef()).level(3).build());
+                    }}
+            }
+            ref.setIsActive(true);
+        }
+
 
         // generate token
         String jwtToken = jwtService.generateToken(user);
