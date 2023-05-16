@@ -100,7 +100,7 @@ public class AuthService {
             if(user.getParentRef() != null) {
                 Optional<Ref> ref1 = refRepository.findById(user.getParentRef());
                 if(ref1.isPresent()){
-                    UserRef userRef1 = userRefRepository.findAllByRefAndUser(ref1.get(),user).get();
+                    UserRef userRef1 = userRefRepository.findByRef(ref1.get()).get();
                     UserRef userRefLevel1 = UserRef.builder().user(user).ref(ref1.get()).level(1).build();
                     userRefRepository.save(userRefLevel1);
                     Optional<UserRef> userRef2 = userRefRepository.findAllByUserAndLevel(userRef1.getUser(),1);
