@@ -10,6 +10,7 @@ import org.dtf202.subscriberservice.repository.RefRepository;
 import org.dtf202.subscriberservice.repository.RoleRepository;
 import org.dtf202.subscriberservice.repository.UserRefRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
+import org.dtf202.subscriberservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -36,7 +37,6 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 
 	@Override
 	public void run(final String... args) throws Exception {
-
 		if(userRepository.count() == 0) {
 			Role roleAdmin = new Role(null, "ADMIN");
 			Role roleUser = new Role(null, "USER");

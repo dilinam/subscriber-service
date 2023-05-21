@@ -1,11 +1,15 @@
 package org.dtf202.subscriberservice.service;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import lombok.RequiredArgsConstructor;
+import org.dtf202.subscriberservice.dto.RefCountBYLevel;
 import org.dtf202.subscriberservice.entity.*;
 import org.dtf202.subscriberservice.repository.*;
 import org.springframework.data.domain.Page;
@@ -24,6 +28,7 @@ public class UserService {
     private final AssetsRepository assetsRepository;
     private final PaymentTypeRepository paymentTypeRepository;
     private final UserPackageRepository userPackageRepository;
+
 
     public Map<String, Object> getAllUsers(int pageNumber, int pageSize, String globalFilter) {
         Page<User> userPage = userRepository
@@ -66,7 +71,7 @@ public class UserService {
         Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user.get(),0);
         Ref ref = userRef.get().getRef();
         Long refId = ref.getId();
-        Integer count =  userRefRepository.getCountOfRef(refId);
+        Integer count =  userRefRepository.getCountOfRef(refId,1);
         if(count > 1 && userBonusRepository.findAllByUserAndBonusType(user.get(),bonusTypeRepository.findAllByType("10")).isEmpty()){
             return 100;
          }else{
@@ -90,6 +95,32 @@ public class UserService {
 
         return ref.getId();
 
+    }
+    public Integer getCountRef(User user,Integer level){
+        Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
+        Ref ref = userRef.get().getRef();
+        Integer userRefCount = userRefRepository.getCountOfRef(ref.getId(),level);
+        return userRefCount;
+
+    }
+    public List<UserRef> getAllUserRefBylevel(User user,Integer level){
+        Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
+        Ref ref = userRef.get().getRef();
+        List<UserRef> userRefList = userRefRepository.findAllByRefAndLevel(ref,level);
+        return userRefList;
+
+    }
+    public Integer getCountUserLevel(User user, Integer level){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
+        Ref ref = userRef.get().getRef();
+        return userRefRepository.findUserREfByDateAndLevelAndCount(localDateTime.minusDays(1),level,ref.getId());
+    }
+    public Integer getCountUserLevelPackage(User user, Integer level){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
+        Ref ref = userRef.get().getRef();
+        return userRefRepository.findUserREfByDateAndLevelAndCountPackage(localDateTime.minusDays(1),level,ref.getId());
     }
 }
 

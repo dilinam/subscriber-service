@@ -2,10 +2,15 @@ package org.dtf202.subscriberservice.controller;
 
 import jakarta.validation.Valid;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.dtf202.subscriberservice.dto.RefCountBYLevel;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.entity.UserPackage;
+import org.dtf202.subscriberservice.entity.UserRef;
 import org.dtf202.subscriberservice.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -103,6 +108,45 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/getAllRef")
+    public ResponseEntity<List<UserRef>> getAllRef(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getRefUsers(user));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getCountRef/{level}")
+    public ResponseEntity<Integer> getCountRef(Authentication authentication,@PathVariable Integer level) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getCountRef(user,level));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getlevelUserRef/{level}")
+    public ResponseEntity<List<UserRef>> getlevelUserRef(Authentication authentication,@PathVariable Integer level) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getAllUserRefBylevel(user,level));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getCountUserLevelBydate/{level}")
+    public Integer getCountUserLevelBydate(Authentication authentication ,@PathVariable Integer level){
+        User user = (User) authentication.getPrincipal();
+        return userService.getCountUserLevel(user,level);
+    }
+
+    @GetMapping("/getCountNewPackageActive/{level}")
+    public Integer getCountNewPackageActive(Authentication authentication ,@PathVariable Integer level){
+        User user = (User) authentication.getPrincipal();
+        return userService.getCountUserLevelPackage(user,level);
+    }
+
 
 
 }
