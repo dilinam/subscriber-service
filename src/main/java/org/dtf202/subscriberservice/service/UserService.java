@@ -28,6 +28,7 @@ public class UserService {
     private final AssetsRepository assetsRepository;
     private final PaymentTypeRepository paymentTypeRepository;
     private final UserPackageRepository userPackageRepository;
+    private final CardMgtRepository cardMgtRepository;
 
 
     public Map<String, Object> getAllUsers(int pageNumber, int pageSize, String globalFilter) {
@@ -121,6 +122,14 @@ public class UserService {
         Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
         Ref ref = userRef.get().getRef();
         return userRefRepository.findUserREfByDateAndLevelAndCountPackage(localDateTime.minusDays(1),level,ref.getId());
+    }
+
+    public CardMgt getCardDetailsUser(User user){
+        return cardMgtRepository.findAllByUser(user);
+    }
+
+    public void saveCard(CardMgt cardMgt){
+        cardMgtRepository.save(cardMgt);
     }
 }
 

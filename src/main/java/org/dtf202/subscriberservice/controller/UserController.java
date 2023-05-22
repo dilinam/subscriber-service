@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.dto.RefCountBYLevel;
+import org.dtf202.subscriberservice.entity.CardMgt;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.entity.UserPackage;
 import org.dtf202.subscriberservice.entity.UserRef;
@@ -145,6 +146,27 @@ public class UserController {
     public Integer getCountNewPackageActive(Authentication authentication ,@PathVariable Integer level){
         User user = (User) authentication.getPrincipal();
         return userService.getCountUserLevelPackage(user,level);
+    }
+
+    @GetMapping("/getCardDeatils")
+    public ResponseEntity<CardMgt>getCardDeatils(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getCardDetailsUser(user));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PutMapping("/putCardDatails")
+    public ResponseEntity<?> putCardDatails(@RequestBody CardMgt cardMgt,Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            cardMgt.setUser(user);
+            userService.saveCard(cardMgt);
+            return ResponseEntity.ok().build();
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
