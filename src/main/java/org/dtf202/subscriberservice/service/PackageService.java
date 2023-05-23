@@ -2,18 +2,13 @@ package org.dtf202.subscriberservice.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.config.JwtService;
+import org.dtf202.subscriberservice.entity.*;
 import org.dtf202.subscriberservice.entity.Package;
-import org.dtf202.subscriberservice.entity.Payment;
-import org.dtf202.subscriberservice.entity.PaymentType;
-import org.dtf202.subscriberservice.entity.User;
-import org.dtf202.subscriberservice.entity.UserPackage;
-import org.dtf202.subscriberservice.repository.PackageRepository;
-import org.dtf202.subscriberservice.repository.PaymentRepository;
-import org.dtf202.subscriberservice.repository.PaymentTypeRepository;
-import org.dtf202.subscriberservice.repository.UserPackageRepository;
-import org.dtf202.subscriberservice.repository.UserRepository;
+import org.dtf202.subscriberservice.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,9 +19,12 @@ public class PackageService {
     private final PackageRepository packageRepository;
     private final UserPackageRepository userPackageRepository;
     private final UserRepository userRepository;
+    private final UserRefRepository userRefRepository;
     private final PaymentTypeRepository paymentTypeRepository;
-    private final PaymentRepository paymentRepository;
     private final JwtService jwtService;
+    private final RefRepository refRepository;
+    private final BonusTypeRepository bonusTypeRepository;
+    private final UserBonusRepository userBonusRepository;
 
     public List<Package> getAllPackages() {
         return packageRepository.findAllByIsActive(true);
@@ -35,7 +33,6 @@ public class PackageService {
     public Package getPackageById(int id) throws Exception {
         return packageRepository.findById(id).orElseThrow(() -> new Exception("Package not found"));
     }
-
     @Transactional
     public void createUserPackage(int id, String token) throws Exception {
 
@@ -47,19 +44,10 @@ public class PackageService {
             throw new Exception("Insufficient Balance");
         }
 
-        // set payment details
-        PaymentType paymentType = paymentTypeRepository.findByType("SUBSCRIBE")
-            .orElseThrow(() -> new Exception("Payment Type not found"));
-        Payment payment = Payment.builder()
-            .paymentType(paymentType)
-            .user(user)
-            .amount(pkg.getPrice())
-            .dateTime(LocalDateTime.now())
-            .isAccepted(true)
-            .build();
-        paymentRepository.save(payment);
         user.setTotalBalance(user.getTotalBalance() - pkg.getPrice());
         userRepository.save(user);
+
+        //setRefToUsers
 
         UserPackage userPackage = UserPackage.builder()
             .activePackage(pkg)
@@ -67,7 +55,6 @@ public class PackageService {
             .status(true)
             .startDateTime(LocalDateTime.now())
             .expireDateTime(LocalDateTime.now().plusYears(1))
-            .payment(payment)
             .build();
         userPackageRepository.save(userPackage);
     }

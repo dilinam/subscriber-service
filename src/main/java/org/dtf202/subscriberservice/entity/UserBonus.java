@@ -11,18 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class UserRef {
-
+public class UserBonus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @ManyToOne
-    private User user;
+    User user;
 
     @ManyToOne
-    private Ref ref;
-
-    private Integer level;
-
+    BonusType bonusType;
 }

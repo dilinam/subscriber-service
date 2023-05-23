@@ -3,12 +3,16 @@ package org.dtf202.subscriberservice.service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.config.JwtService;
 import org.dtf202.subscriberservice.dto.AuthenticationRequest;
 import org.dtf202.subscriberservice.dto.AuthenticationResponse;
+import org.dtf202.subscriberservice.entity.Ref;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.entity.UserRef;
+import org.dtf202.subscriberservice.repository.RefRepository;
 import org.dtf202.subscriberservice.repository.RoleRepository;
 import org.dtf202.subscriberservice.repository.UserRefRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
@@ -20,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final UserRefRepository userRefRepository;
     private final StringHelpers stringHelpers;
+    private final RefRepository refRepository;
 
     @Value("${spring.mail.noreply}")
     private String noReplyEMail;
@@ -55,12 +61,6 @@ public class AuthService {
         user.setRegisteredDateTime(LocalDateTime.now());
         user.setTotalBalance(0.0);
 
-        if(user.getParentRef() != null) {
-            UserRef parentRef = userRefRepository.findById(user.getParentRef().getRef())
-                .orElseThrow(() -> new Exception("Ref not found"));
-            user.setParentRef(parentRef);
-        }
-
         String verificationToken = stringHelpers.generateRandomStringUsingEmail(user.getEmail());
         UNVERIFIED_USERS.put(verificationToken, user);
 
@@ -80,6 +80,7 @@ public class AuthService {
         emailThread.start();
     }
 
+//    @Transactional
     public AuthenticationResponse verifyUserAndCreate(String verificationToken) throws Exception {
         User user = UNVERIFIED_USERS.remove(verificationToken);
 
@@ -90,9 +91,29 @@ public class AuthService {
         userRepository.save(user);
 
         // create ref id for user
-        String ref = stringHelpers.generateRandomStringUsingEmail(user.getEmail());
-        UserRef userRef = UserRef.builder().user(user).ref(ref).build();
+        Ref ref = Ref.builder().isActive(false).build();
+        refRepository.save(ref);
+        UserRef userRef = UserRef.builder().ref(ref).user(user).level(0).build();
         userRefRepository.save(userRef);
+
+        if(!ref.getIsActive()){
+            if(user.getParentRef() != null) {
+                Optional<Ref> ref1 = refRepository.findById(user.getParentRef());
+                if(ref1.isPresent()){
+                    UserRef userRef1 = userRefRepository.findByRef(ref1.get()).get();
+                    UserRef userRefLevel1 = UserRef.builder().user(user).ref(ref1.get()).level(1).build();
+                    userRefRepository.save(userRefLevel1);
+                    Optional<UserRef> userRef2 = userRefRepository.findAllByUserAndLevel(userRef1.getUser(),1);
+                    if (userRef2.isPresent()){
+                        UserRef userRefLevel2 =UserRef.builder().user(user).ref(userRef2.get().getRef()).level(2).build();
+                        userRefRepository.save(userRefLevel2);
+                        Optional<UserRef> userRef3 = userRefRepository.findAllByUserAndLevel(userRef2.get().getUser(),1);
+                        userRef3.ifPresent(userRef4 -> UserRef.builder().user(user).ref(userRef4.getRef()).level(3).build());
+                    }}
+            }
+            ref.setIsActive(true);
+        }
+
 
         // generate token
         String jwtToken = jwtService.generateToken(user);

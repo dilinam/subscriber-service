@@ -2,19 +2,14 @@ package org.dtf202.subscriberservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,10 +42,7 @@ public class User implements UserDetails {
     private String email;
 
     @Column(columnDefinition = "TEXT")
-    @JsonIgnore
     private String password;
-    @OneToOne
-    private UserRef parentRef;
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime registeredDateTime;
@@ -61,6 +53,8 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    private Long ParentRef;
 
     @Override
     @JsonDeserialize(using = CustomAuthorityDeserializer.class)

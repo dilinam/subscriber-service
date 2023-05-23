@@ -11,18 +11,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class UserRef {
-
+public class CardMgt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
+
+    String accountType;
+
+    String cardType;
+
+    String receivingAddress;
 
     @ManyToOne
-    private User user;
+    User user;
 
-    @ManyToOne
-    private Ref ref;
-
-    private Integer level;
-
+    String ChainName;
 }

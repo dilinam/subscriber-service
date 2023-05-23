@@ -1,11 +1,20 @@
 package org.dtf202.subscriberservice.controller;
 
 import jakarta.validation.Valid;
+
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.dtf202.subscriberservice.dto.RefCountBYLevel;
+import org.dtf202.subscriberservice.entity.CardMgt;
 import org.dtf202.subscriberservice.entity.User;
+import org.dtf202.subscriberservice.entity.UserPackage;
+import org.dtf202.subscriberservice.entity.UserRef;
 import org.dtf202.subscriberservice.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +45,15 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/package")
+    public ResponseEntity<UserPackage> getUserPackageById( Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getUserPackageById(user));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @PutMapping
     public ResponseEntity<?> editUser(@Valid @RequestBody User editingUser) {
@@ -56,5 +74,101 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/totalRev/{id}")
+    public ResponseEntity<Double> getTotalBalanceRev(@PathVariable long id){
+        try {
+            return ResponseEntity.ok(userService.getTotalBalRev(id));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/l1count/{id}")
+    public ResponseEntity<Integer> getBonusUsers(@PathVariable long id){
+        try {
+            return ResponseEntity.ok(userService.getBonus(id));
+        } catch(Exception ex) {
+            System.out.println(ex);
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getusername")
+    public ResponseEntity<?> getUser(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(user);
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getreflink")
+    public ResponseEntity<?> getRef(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getRefID(user));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getAllRef")
+    public ResponseEntity<List<UserRef>> getAllRef(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getRefUsers(user));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getCountRef/{level}")
+    public ResponseEntity<Integer> getCountRef(Authentication authentication,@PathVariable Integer level) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getCountRef(user,level));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getlevelUserRef/{level}")
+    public ResponseEntity<List<UserRef>> getlevelUserRef(Authentication authentication,@PathVariable Integer level) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getAllUserRefBylevel(user,level));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getCountUserLevelBydate/{level}")
+    public Integer getCountUserLevelBydate(Authentication authentication ,@PathVariable Integer level){
+        User user = (User) authentication.getPrincipal();
+        return userService.getCountUserLevel(user,level);
+    }
+
+    @GetMapping("/getCountNewPackageActive/{level}")
+    public Integer getCountNewPackageActive(Authentication authentication ,@PathVariable Integer level){
+        User user = (User) authentication.getPrincipal();
+        return userService.getCountUserLevelPackage(user,level);
+    }
+
+    @GetMapping("/getCardDeatils")
+    public ResponseEntity<CardMgt>getCardDeatils(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getCardDetailsUser(user));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PutMapping("/putCardDatails")
+    public ResponseEntity<?> putCardDatails(@RequestBody CardMgt cardMgt,Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            cardMgt.setUser(user);
+            userService.saveCard(cardMgt);
+            return ResponseEntity.ok().build();
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 
 }

@@ -1,12 +1,16 @@
 package org.dtf202.subscriberservice;
 
 import java.time.LocalDateTime;
+
+import org.dtf202.subscriberservice.entity.Ref;
 import org.dtf202.subscriberservice.entity.Role;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.entity.UserRef;
+import org.dtf202.subscriberservice.repository.RefRepository;
 import org.dtf202.subscriberservice.repository.RoleRepository;
 import org.dtf202.subscriberservice.repository.UserRefRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
+import org.dtf202.subscriberservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,6 +28,8 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private UserRefRepository userRefRepository;
+	@Autowired
+	private RefRepository refRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SubscriberServiceApplication.class, args);
@@ -31,7 +37,6 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 
 	@Override
 	public void run(final String... args) throws Exception {
-
 		if(userRepository.count() == 0) {
 			Role roleAdmin = new Role(null, "ADMIN");
 			Role roleUser = new Role(null, "USER");
@@ -60,15 +65,14 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 				.totalBalance(0.0)
 				.build();
 
-			UserRef userRef = UserRef.builder()
-					.ref("TESTUSERREF")
-						.user(user)
-							.build();
+			Ref ref = Ref.builder().isActive(false).build();
+			UserRef userRef = UserRef.builder().ref(ref).user(user).level(0).build();
 
 			roleRepository.save(roleAdmin);
 			roleRepository.save(roleUser);
 			userRepository.save(userAdmin);
 			userRepository.save(user);
+			refRepository.save(ref);
 			userRefRepository.save(userRef);
 		}
 	}
