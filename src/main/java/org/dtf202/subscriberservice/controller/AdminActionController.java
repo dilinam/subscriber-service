@@ -2,6 +2,7 @@ package org.dtf202.subscriberservice.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.dtf202.subscriberservice.entity.AppConfig;
 import org.dtf202.subscriberservice.entity.Assets;
 import org.dtf202.subscriberservice.service.AdminActionService;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +57,11 @@ public class AdminActionController {
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/app-config")
+    public void saveAppConfig(@RequestBody AppConfig appConfig) {
+        adminActionService.saveAppConfig(appConfig);
     }
 
 }

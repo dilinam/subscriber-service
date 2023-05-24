@@ -1,11 +1,12 @@
 package org.dtf202.subscriberservice;
 
 import java.time.LocalDateTime;
-
+import org.dtf202.subscriberservice.entity.AppConfig;
 import org.dtf202.subscriberservice.entity.Ref;
 import org.dtf202.subscriberservice.entity.Role;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.entity.UserRef;
+import org.dtf202.subscriberservice.repository.AppConfigRepository;
 import org.dtf202.subscriberservice.repository.RefRepository;
 import org.dtf202.subscriberservice.repository.RoleRepository;
 import org.dtf202.subscriberservice.repository.UserRefRepository;
@@ -30,6 +31,8 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 	private UserRefRepository userRefRepository;
 	@Autowired
 	private RefRepository refRepository;
+	@Autowired
+	private AppConfigRepository appConfigRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SubscriberServiceApplication.class, args);
@@ -37,6 +40,14 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 
 	@Override
 	public void run(final String... args) throws Exception {
+
+		if(appConfigRepository.findByProperty("DISABLE_REG_AND_NEW_PKG").isEmpty()) {
+			AppConfig appConfig = new AppConfig();
+			appConfig.setProperty("DISABLE_REG_AND_NEW_PKG");
+			appConfig.setValue("FALSE");
+			appConfigRepository.save(appConfig);
+		}
+
 		if(userRepository.count() == 0) {
 			Role roleAdmin = new Role(null, "ADMIN");
 			Role roleUser = new Role(null, "USER");

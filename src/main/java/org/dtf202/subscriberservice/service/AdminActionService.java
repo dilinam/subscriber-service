@@ -1,8 +1,10 @@
 package org.dtf202.subscriberservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.dtf202.subscriberservice.entity.AppConfig;
 import org.dtf202.subscriberservice.entity.Assets;
 import org.dtf202.subscriberservice.entity.User;
+import org.dtf202.subscriberservice.repository.AppConfigRepository;
 import org.dtf202.subscriberservice.repository.AssetsRepository;
 import org.dtf202.subscriberservice.repository.PaymentTypeRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
@@ -18,6 +20,7 @@ public class AdminActionService {
     private final UserRepository userRepository;
     private final AssetsRepository assetsRepository;
     private final PaymentTypeRepository paymentTypeRepository;
+    private final AppConfigRepository appConfigRepository;
 
     public List<Assets> getAllNotAcceptedRecharges(){
         return assetsRepository.findAllByIsNotAccepted(2);
@@ -58,6 +61,21 @@ public class AdminActionService {
             }
 
         }
+    }
+
+    public AppConfig getAppConfig(String property) throws Exception {
+
+        Optional<AppConfig> appConfigOptional = appConfigRepository.findByProperty(property);
+        return appConfigOptional.orElseThrow(() -> new Exception("App config not found"));
+    }
+
+    public List<Assets> getAllNotAcceptedAssets(){
+        // 1 - widrawal 2 - diposit
+        return assetsRepository.findAllByIsNotAccepted(2);
+    }
+
+    public void saveAppConfig(AppConfig appConfig) {
+        appConfigRepository.save(appConfig);
     }
 
 }
