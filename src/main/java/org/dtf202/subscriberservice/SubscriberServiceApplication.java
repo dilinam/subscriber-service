@@ -11,14 +11,16 @@ import org.dtf202.subscriberservice.repository.RefRepository;
 import org.dtf202.subscriberservice.repository.RoleRepository;
 import org.dtf202.subscriberservice.repository.UserRefRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
-import org.dtf202.subscriberservice.service.UserService;
+import org.dtf202.subscriberservice.service.RevenueScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
+@EnableScheduling
 public class SubscriberServiceApplication implements CommandLineRunner {
 
 	@Autowired
@@ -33,6 +35,8 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 	private RefRepository refRepository;
 	@Autowired
 	private AppConfigRepository appConfigRepository;
+	@Autowired
+	private RevenueScheduler revenueScheduler;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SubscriberServiceApplication.class, args);
@@ -85,6 +89,10 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 			userRepository.save(user);
 			refRepository.save(ref);
 			userRefRepository.save(userRef);
+
+			revenueScheduler.revScheduler();
+
 		}
 	}
+
 }
