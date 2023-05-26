@@ -1,5 +1,6 @@
 package org.dtf202.subscriberservice.service;
 
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.entity.AppConfig;
 import org.dtf202.subscriberservice.entity.Assets;
@@ -8,6 +9,8 @@ import org.dtf202.subscriberservice.repository.AppConfigRepository;
 import org.dtf202.subscriberservice.repository.AssetsRepository;
 import org.dtf202.subscriberservice.repository.PaymentTypeRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,9 +72,21 @@ public class AdminActionService {
         return appConfigOptional.orElseThrow(() -> new Exception("App config not found"));
     }
 
-    public List<Assets> getAllNotAcceptedAssets(){
+    public Map<String, Object> getAllNotAcceptedAssets(int pageNumber, int pageSize, String globalFilter){
         // 1 - widrawal 2 - diposit
-        return assetsRepository.findAllByIsNotAccepted(2);
+        Page<Assets> assetPage = assetsRepository.findAllNotAcceptedAssets(PageRequest.of(pageNumber, pageSize),
+            globalFilter, globalFilter, globalFilter);
+        return Map.of("data", assetPage.stream().toList(), "count", assetPage.getTotalElements());
+    }
+
+    public void acceptAsset(Assets asset){
+        asset.setIsAccepted(true);
+        Double balance = asset.getUser().getTotalBalance();
+        Double totalBalance = (asset.getPaymentType().getId() == 1)? balance - asset.getAmount() :balance + asset.getAmount();
+        User user = userRepository.findById(asset.getUser().getId()).orElseThrow(() -> new RuntimeException("not found user"));
+        user.setTotalBalance(totalBalance);
+        userRepository.save(user);
+        assetsRepository.save(asset);
     }
 
     public void saveAppConfig(AppConfig appConfig) {
