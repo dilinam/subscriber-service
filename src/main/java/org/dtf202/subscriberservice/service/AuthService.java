@@ -39,6 +39,7 @@ public class AuthService {
     private final UserRefRepository userRefRepository;
     private final StringHelpers stringHelpers;
     private final RefRepository refRepository;
+    private final AdminActionService adminActionService;
 
     @Value("${spring.mail.noreply}")
     private String noReplyEMail;
@@ -49,6 +50,10 @@ public class AuthService {
     private final static Map<String, User> UNVERIFIED_USERS = new HashMap<>();
 
     public void register(User user) throws Exception {
+
+        if(adminActionService.getAppConfig("DISABLE_REG_AND_NEW_PKG").getValue().equalsIgnoreCase("TRUE")) {
+            throw new IllegalArgumentException();
+        }
 
         if(userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new IllegalArgumentException();

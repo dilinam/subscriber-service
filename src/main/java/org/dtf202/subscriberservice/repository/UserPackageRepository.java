@@ -6,10 +6,13 @@ import org.dtf202.subscriberservice.entity.UserPackage;
 import org.dtf202.subscriberservice.entity.UserRef;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserPackageRepository extends JpaRepository<UserPackage, Long> {
     Optional<UserPackage> findAllByUserAndStatusIsTrue(User user);
+
+    Optional<List<UserPackage>> findAllByStatusIsTrue();
 
 
 }
