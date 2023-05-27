@@ -3,9 +3,11 @@ package org.dtf202.subscriberservice.service;
 import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.entity.Assets;
 import org.dtf202.subscriberservice.entity.PaymentType;
+import org.dtf202.subscriberservice.entity.RevenueUserPackage;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.repository.AssetsRepository;
 import org.dtf202.subscriberservice.repository.PaymentTypeRepository;
+import org.dtf202.subscriberservice.repository.RevenueUserPackageRepository;
 import org.dtf202.subscriberservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ public class AssetsService {
     private final UserRepository userRepository;
     private final AssetsRepository assetsRepository;
     private final PaymentTypeRepository paymentTypeRepository;
+    private final RevenueUserPackageRepository revenueUserPackageRepository;
     public List<Assets> getAllRecharges(){
         return assetsRepository.findAllByPaymentTypeType("Recharge");
 
@@ -44,10 +47,10 @@ public class AssetsService {
     public List<Assets> getAllNotAcceptedRecharge(){
         return assetsRepository.findAllByIsNotAccepted(1);
     }
-    public List<Assets> getAllRevenueByDate(long timestamp){
+    public List<RevenueUserPackage> getAllRevenueByDate(long timestamp,User user){
         LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), TimeZone.getDefault().toZoneId());
 
-        List<Assets> rev = assetsRepository.findAllByDateTimeGreaterThanEqualAndPaymentTypeType(localDateTime,"Revenue");
+        List<RevenueUserPackage> rev = revenueUserPackageRepository.findAllByUserAndDateTimeGreaterThanEqual(user,localDateTime);
 
         return rev;
 

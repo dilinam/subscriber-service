@@ -34,20 +34,26 @@ public class PackageService {
         return packageRepository.findById(id).orElseThrow(() -> new Exception("Package not found"));
     }
     @Transactional
-    public void createUserPackage(int id, String token) throws Exception {
+    public void createUserPackage(int id,User user) throws Exception {
 
         Package pkg = packageRepository.findById(id).orElseThrow(() -> new Exception("Package not found"));
-        User user = userRepository.findByEmail(jwtService.extractUsername(token))
-            .orElseThrow(() -> new Exception("User not found"));
-
         if(pkg.getPrice() > user.getTotalBalance()) {
             throw new Exception("Insufficient Balance");
         }
+        Optional<UserPackage> uPack = userPackageRepository.findAllByUserAndStatusIsTrue(user);
+        if (uPack.isPresent()){
+            uPack.get().setStatus(false);
+            user.setTotalBalance(user.getTotalBalance() - pkg.getPrice() + uPack.get().getActivePackage().getPrice());
+            userPackageRepository.save(uPack.get());
+            userRepository.save(user);
+        }else{
+            user.setTotalBalance(user.getTotalBalance() - pkg.getPrice());
+            userRepository.save(user);
+        }
 
-        user.setTotalBalance(user.getTotalBalance() - pkg.getPrice());
-        userRepository.save(user);
 
         //setRefToUsers
+
 
         UserPackage userPackage = UserPackage.builder()
             .activePackage(pkg)

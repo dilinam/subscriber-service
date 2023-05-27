@@ -3,9 +3,11 @@ package org.dtf202.subscriberservice.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.entity.Assets;
+import org.dtf202.subscriberservice.entity.RevenueUserPackage;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.service.AssetsService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -67,9 +69,10 @@ public class AssetController {
     }
 
     @GetMapping("/Revenue/{timestamp}")
-    public ResponseEntity<List<Assets>> getAllRevenue(@PathVariable long timestamp) {
+    public ResponseEntity<List<RevenueUserPackage>> getAllRevenue(@PathVariable long timestamp, Authentication authentication) {
         try {
-            return ResponseEntity.ok(assetsService.getAllRevenueByDate(timestamp));
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(assetsService.getAllRevenueByDate(timestamp,user));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }
