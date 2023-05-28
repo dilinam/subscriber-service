@@ -122,7 +122,7 @@ public class AuthService {
 
         // generate token
         String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder().token(jwtToken).role(user.getRole().getName()).build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
@@ -137,6 +137,6 @@ public class AuthService {
         // generate token
         User user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
         String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder().token(jwtToken).role(user.getRole().getName()).build();
     }
 }
