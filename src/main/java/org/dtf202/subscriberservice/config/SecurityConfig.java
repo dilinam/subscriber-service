@@ -35,7 +35,7 @@ public class SecurityConfig {
             .requestMatchers("/api/adminAction/**")
             .hasAnyAuthority("ADMIN")
                 .requestMatchers("/api/users/**")
-                .hasAnyAuthority( "ADMIN")
+                .hasAnyAuthority( "USER","ADMIN")
             .anyRequest()
             .authenticated()
             .and()
