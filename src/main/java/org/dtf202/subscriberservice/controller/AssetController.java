@@ -36,17 +36,19 @@ public class AssetController {
         }
     }
     @GetMapping("/Recharge/{id}")
-    public ResponseEntity<List<Assets>> getAllRechargesByUserId(@PathVariable long id) {
+    public ResponseEntity<List<Assets>> getAllRechargesByUserId(@PathVariable Authentication authentication) {
         try {
-            return ResponseEntity.ok(assetsService.getAllRechargesByUserId(id));
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(assetsService.getAllRechargesByUserId(user.getId()));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/Withdrawals/{id}")
-    public ResponseEntity<List<Assets>> getAllWithdrawalsByUserId(@PathVariable long id) {
+    @GetMapping("/Withdrawals/")
+    public ResponseEntity<List<Assets>> getAllWithdrawalsByUserId(Authentication authentication) {
         try {
-            return ResponseEntity.ok(assetsService.getAllWithdrawalsByUserId(id));
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(assetsService.getAllWithdrawalsByUserId(user.getId()));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }
@@ -54,6 +56,7 @@ public class AssetController {
     @GetMapping("/RefCom/{id}")
     public ResponseEntity<List<Assets>> getAllRef(@PathVariable long id) {
         try {
+
             return ResponseEntity.ok(assetsService.getAllRefByUser(id));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
