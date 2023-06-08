@@ -44,10 +44,12 @@ public class PackageService {
         if (uPack.isPresent()){
             uPack.get().setStatus(false);
             user.setTotalBalance(user.getTotalBalance() - pkg.getPrice() + uPack.get().getActivePackage().getPrice());
+            user.setMaximumRevenue(pkg.getPrice()*4);
             userPackageRepository.save(uPack.get());
             userRepository.save(user);
         }else{
             user.setTotalBalance(user.getTotalBalance() - pkg.getPrice());
+            user.setMaximumRevenue(pkg.getPrice()*4);
             userRepository.save(user);
         }
 

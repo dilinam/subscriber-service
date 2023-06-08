@@ -48,6 +48,8 @@ public class User implements UserDetails {
     private LocalDateTime registeredDateTime;
 
     private Double totalBalance;
+    private Double maximumRevenue;
+    private Double totalRevenue;
     private Boolean isDeleted = false;
     private Boolean isActive = true;
     @ManyToOne

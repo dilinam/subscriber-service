@@ -65,6 +65,7 @@ public class AuthService {
         user.setIsActive(true);
         user.setRegisteredDateTime(LocalDateTime.now());
         user.setTotalBalance(0.0);
+        user.setMaximumRevenue(0.0);
 
         String verificationToken = stringHelpers.generateRandomStringUsingEmail(user.getEmail());
         UNVERIFIED_USERS.put(verificationToken, user);
