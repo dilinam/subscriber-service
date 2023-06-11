@@ -82,7 +82,7 @@ public class AdminActionService {
     public void acceptAsset(Assets asset){
         asset.setIsAccepted(true);
         Double balance = asset.getUser().getTotalBalance();
-        Double totalBalance = (asset.getPaymentType().getId() == 1)? balance - asset.getAmount() :balance + asset.getAmount();
+        Double totalBalance = balance + asset.getAmount();
         User user = userRepository.findById(asset.getUser().getId()).orElseThrow(() -> new RuntimeException("not found user"));
         user.setTotalBalance(totalBalance);
         userRepository.save(user);

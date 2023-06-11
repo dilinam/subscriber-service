@@ -74,10 +74,11 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/totalRev/{id}")
-    public ResponseEntity<Double> getTotalBalanceRev(@PathVariable long id){
+    @GetMapping("/totalRev/")
+    public ResponseEntity<Double> getTotalBalanceRev(Authentication authentication){
         try {
-            return ResponseEntity.ok(userService.getTotalBalRev(id));
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getTotalBalRev(user));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }

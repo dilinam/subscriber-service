@@ -21,7 +21,7 @@ public class RevenueScheduler {
     private final UserRepository userRepository;
     private final UserPackageRepository userPackageRepository;
 
-    @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "0 29 13 * * MON,TUE,WED,THU,FRI,SUN")
     public void revScheduler(){
         LocalDateTime dt = LocalDateTime.now();
         Optional<List<UserPackage>> userPkList= userPackageRepository.findAllByStatusIsTrue();

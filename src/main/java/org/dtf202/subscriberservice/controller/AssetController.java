@@ -3,9 +3,11 @@ package org.dtf202.subscriberservice.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.entity.Assets;
+import org.dtf202.subscriberservice.entity.RevenueUserPackage;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.service.AssetsService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -17,14 +19,14 @@ import java.util.List;
 public class AssetController {
     private final AssetsService assetsService;
 
-    @GetMapping("/Recharges")
-    public ResponseEntity<List<Assets>> getAllRecharges() {
-        try {
-            return ResponseEntity.ok(assetsService.getAllRecharges());
-        } catch(Exception ex) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @GetMapping("/Recharges")
+//    public ResponseEntity<List<Assets>> getAllRecharges() {
+//        try {
+//            return ResponseEntity.ok(assetsService.getAllRecharges());
+//        } catch(Exception ex) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
     @GetMapping("/Withdrawals")
     public ResponseEntity<List<Assets>> getAllWithdrawals() {
         try {
@@ -33,18 +35,20 @@ public class AssetController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/Recharge/{id}")
-    public ResponseEntity<List<Assets>> getAllRechargesByUserId(@PathVariable long id) {
+    @GetMapping("/Recharge")
+    public ResponseEntity<List<Assets>> getAllRechargesByUserId(@PathVariable Authentication authentication) {
         try {
-            return ResponseEntity.ok(assetsService.getAllRechargesByUserId(id));
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(assetsService.getAllRechargesByUserId(user.getId()));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/Withdrawals/{id}")
-    public ResponseEntity<List<Assets>> getAllWithdrawalsByUserId(@PathVariable long id) {
+    @GetMapping("/Withdrawals/")
+    public ResponseEntity<List<Assets>> getAllWithdrawalsByUserId(Authentication authentication) {
         try {
-            return ResponseEntity.ok(assetsService.getAllWithdrawalsByUserId(id));
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(assetsService.getAllWithdrawalsByUserId(user.getId()));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }
@@ -52,6 +56,7 @@ public class AssetController {
     @GetMapping("/RefCom/{id}")
     public ResponseEntity<List<Assets>> getAllRef(@PathVariable long id) {
         try {
+
             return ResponseEntity.ok(assetsService.getAllRefByUser(id));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
@@ -67,9 +72,10 @@ public class AssetController {
     }
 
     @GetMapping("/Revenue/{timestamp}")
-    public ResponseEntity<List<Assets>> getAllRevenue(@PathVariable long timestamp) {
+    public ResponseEntity<List<RevenueUserPackage>> getAllRevenue(@PathVariable long timestamp, Authentication authentication) {
         try {
-            return ResponseEntity.ok(assetsService.getAllRevenueByDate(timestamp));
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(assetsService.getAllRevenueByDate(timestamp,user));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }

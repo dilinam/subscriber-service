@@ -19,8 +19,6 @@ public interface AssetsRepository extends JpaRepository<Assets,Long> {
     List<Assets> findAllByIsNotAccepted(Integer id);
     @Query("SELECT assets From Assets assets where assets.dateTime >= ?1 and assets.paymentType.type = ?2")
     List<Assets> findAllByDateTimeGreaterThanEqualAndPaymentTypeType(LocalDateTime dateTime,String type);
-    @Query("Select sum(assets.amount) from Assets assets where assets.user = ?1 and assets.paymentType.id = 3")
-    Double findSumofRev(User user);
 
     @Query(
         "SELECT assets From Assets assets where assets.paymentType.id in (1, 2) and not assets.isAccepted " +

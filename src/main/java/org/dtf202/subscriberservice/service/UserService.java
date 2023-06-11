@@ -29,6 +29,7 @@ public class UserService {
     private final PaymentTypeRepository paymentTypeRepository;
     private final UserPackageRepository userPackageRepository;
     private final CardMgtRepository cardMgtRepository;
+    private final RevenueUserPackageRepository revenueUserPackageRepository;
 
 
     public Map<String, Object> getAllUsers(int pageNumber, int pageSize, String globalFilter) {
@@ -62,9 +63,9 @@ public class UserService {
         user.setLastName(editingUser.getLastName());
         userRepository.save(user);
     }
-    public Double getTotalBalRev(Long id) throws Exception {
-        User user = userRepository.findById(id).orElseThrow(() -> new Exception("User not found"));
-        return assetsRepository.findSumofRev(user);
+    public Double getTotalBalRev(User user) throws Exception {
+
+        return revenueUserPackageRepository.findSumofRev(user);
     }
 
     public Integer getBonus(Long id){

@@ -14,5 +14,5 @@ public interface UserPackageRepository extends JpaRepository<UserPackage, Long> 
 
     Optional<List<UserPackage>> findAllByStatusIsTrue();
 
-
+    Optional<UserPackage> findAllByUser(User user);
 }
