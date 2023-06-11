@@ -19,14 +19,14 @@ import java.util.List;
 public class AssetController {
     private final AssetsService assetsService;
 
-    @GetMapping("/Recharges")
-    public ResponseEntity<List<Assets>> getAllRecharges() {
-        try {
-            return ResponseEntity.ok(assetsService.getAllRecharges());
-        } catch(Exception ex) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @GetMapping("/Recharges")
+//    public ResponseEntity<List<Assets>> getAllRecharges() {
+//        try {
+//            return ResponseEntity.ok(assetsService.getAllRecharges());
+//        } catch(Exception ex) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
     @GetMapping("/Withdrawals")
     public ResponseEntity<List<Assets>> getAllWithdrawals() {
         try {
@@ -35,7 +35,7 @@ public class AssetController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/Recharge/{id}")
+    @GetMapping("/Recharge")
     public ResponseEntity<List<Assets>> getAllRechargesByUserId(@PathVariable Authentication authentication) {
         try {
             User user = (User) authentication.getPrincipal();

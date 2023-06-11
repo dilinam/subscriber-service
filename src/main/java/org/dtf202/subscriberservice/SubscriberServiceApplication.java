@@ -170,10 +170,10 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 			packageRepository.save(platinumIII);
 		}
 		if(paymentTypeRepository.count()==0){
-			PaymentType recharge = PaymentType.builder()
-					.type("Recharge").build();
 			PaymentType withdrawal = PaymentType.builder()
 					.type("Withdrawal").build();
+			PaymentType recharge = PaymentType.builder()
+					.type("Recharge").build();
 			PaymentType refcom = PaymentType.builder()
 					.type("RefCom").build();
 			paymentTypeRepository.save(recharge);
