@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface AssetsRepository extends JpaRepository<Assets,Long> {
     List<Assets> findAllByPaymentTypeType(String type);
-
+    @Query("SELECT assets From Assets assets where assets.paymentType.type = ?2 and assets.user.id = ?1")
     List<Assets> findAllByUserIdAndPaymentTypeType(Long id,String type);
     @Query("SELECT assets From Assets assets where assets.paymentType.id = ?1 and not assets.isAccepted")
     List<Assets> findAllByIsNotAccepted(Integer id);

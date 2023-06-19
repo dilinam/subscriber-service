@@ -61,6 +61,13 @@ public class UserService {
         User user = getUserById(editingUser.getId());
         user.setFirstName(editingUser.getFirstName());
         user.setLastName(editingUser.getLastName());
+        user.setAddress(editingUser.getAddress());
+        user.setGender(editingUser.getGender());
+        user.setDob(editingUser.getDob());
+        user.setPhone(editingUser.getPhone());
+        user.setZipCode(editingUser.getZipCode());
+        user.setCountry(editingUser.getCountry());
+        user.setCity(editingUser.getCity());
         userRepository.save(user);
     }
     public Double getTotalBalRev(User user) throws Exception {

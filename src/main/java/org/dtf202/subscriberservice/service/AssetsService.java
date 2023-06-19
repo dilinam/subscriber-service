@@ -41,12 +41,6 @@ public class AssetsService {
         return assetsRepository.findAllByUserIdAndPaymentTypeType(id,"Withdrawal");
 
     }
-    public List<Assets> getAllNotAcceptedWithdrawals(){
-        return assetsRepository.findAllByIsNotAccepted(2);
-    }
-    public List<Assets> getAllNotAcceptedRecharge(){
-        return assetsRepository.findAllByIsNotAccepted(1);
-    }
     public List<RevenueUserPackage> getAllRevenueByDate(long timestamp,User user){
         LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), TimeZone.getDefault().toZoneId());
 

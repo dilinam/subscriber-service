@@ -28,7 +28,7 @@ public class AssetController {
 //        }
 //    }
     @GetMapping("/Withdrawals")
-    public ResponseEntity<List<Assets>> getAllWithdrawals() {
+    public ResponseEntity<List<Assets>> getAllWithdrawalByUserId() {
         try {
             return ResponseEntity.ok(assetsService.getAllWithdrawals());
         } catch(Exception ex) {
@@ -36,7 +36,7 @@ public class AssetController {
         }
     }
     @GetMapping("/Recharge")
-    public ResponseEntity<List<Assets>> getAllRechargesByUserId(@PathVariable Authentication authentication) {
+    public ResponseEntity<List<Assets>> getAllRechargesByUserId(Authentication authentication) {
         try {
             User user = (User) authentication.getPrincipal();
             return ResponseEntity.ok(assetsService.getAllRechargesByUserId(user.getId()));
