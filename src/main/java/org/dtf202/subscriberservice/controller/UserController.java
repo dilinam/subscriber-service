@@ -8,10 +8,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.dto.RefCountBYLevel;
-import org.dtf202.subscriberservice.entity.CardMgt;
-import org.dtf202.subscriberservice.entity.User;
-import org.dtf202.subscriberservice.entity.UserPackage;
-import org.dtf202.subscriberservice.entity.UserRef;
+import org.dtf202.subscriberservice.entity.*;
 import org.dtf202.subscriberservice.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -124,6 +121,15 @@ public class UserController {
         try {
             User user = (User) authentication.getPrincipal();
             return ResponseEntity.ok(userService.getCountRef(user,level));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getuserBonus")
+    public ResponseEntity<List<UserBonus>> getUserBonus(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getuserBouns(user));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }

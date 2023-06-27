@@ -98,6 +98,13 @@ public class UserService {
 
 
     }
+    public List<UserBonus> getuserBouns(User user){
+        Optional<List<UserBonus>> userBonusList = userBonusRepository.findAllByUser(user);
+
+        return userBonusList.get();
+
+
+    }
     public Long getRefID(User user){
         Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
         Ref ref = userRef.get().getRef();
