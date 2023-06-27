@@ -82,8 +82,9 @@ public class AssetController {
     }
 
     @PostMapping("/{id}/{amount}")
-    public ResponseEntity<?> AddNewAsset(@Valid @RequestBody User user,@PathVariable Integer id,@PathVariable Double amount){
+    public ResponseEntity<?> AddNewAsset(@Valid @PathVariable Integer id,@PathVariable Double amount,Authentication authentication){
         try {
+            User user = (User) authentication.getPrincipal();
             assetsService.save(user,id,amount);
             return ResponseEntity.ok().build();
         } catch(Exception ex) {

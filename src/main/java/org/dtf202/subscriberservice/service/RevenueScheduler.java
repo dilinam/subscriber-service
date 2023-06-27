@@ -21,7 +21,7 @@ public class RevenueScheduler {
     private final UserRepository userRepository;
     private final UserPackageRepository userPackageRepository;
 
-    @Scheduled(cron = "0 29 13 * * MON,TUE,WED,THU,FRI,SUN")
+    @Scheduled(cron = "0 29 13 * * MON,TUE,WED,THU,FRI")
 //    @Scheduled(cron = "1 * * * * *")
     public void revScheduler(){
         LocalDateTime dt = LocalDateTime.now();
