@@ -16,7 +16,7 @@ public interface UserRefRepository extends JpaRepository<UserRef, Long> {
     List<UserRef> findAllByRef(Ref ref);
 
     Optional<UserRef> findAllByRefAndUser(Ref ref,User user);
-    Optional<UserRef> findByRef(Ref ref);
+    Optional<UserRef> findFirstByRef(Ref ref);
     Optional<UserRef> findAllByUser(User user);
 
     Optional<UserRef> findAllByUserAndLevel(User user,Integer level);
