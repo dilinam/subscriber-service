@@ -64,6 +64,16 @@ public class AdminActionController {
                                                                        @RequestParam String globalFilter){
         return ResponseEntity.ok(adminActionService.getAllNotAcceptedAssets(pageNumber, pageSize, globalFilter));
     }
+    @PutMapping("/reject-asset")
+    public ResponseEntity<?> rejectAsset(@Valid @RequestBody Assets asset) {
+        try {
+            adminActionService.rejectAsset(asset);
+            return ResponseEntity.ok().build();
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @PutMapping("/accept-asset")
     public ResponseEntity<?> acceptAsset(@Valid @RequestBody Assets asset) {
