@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface BonusTypeRepository  extends JpaRepository<BonusType, Long> {
 
     BonusType findAllByType(String type);
+
+    BonusType findBonusTypeByPrice(Double price);
 }

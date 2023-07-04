@@ -78,7 +78,7 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 				.isActive(true)
 				.role(roleUser)
 				.registeredDateTime(LocalDateTime.now())
-				.totalBalance(0.0)
+				.totalBalance(0.0).totalRevenue(0.0).maximumRevenue(0.0)
 				.build();
 
 			Ref ref = Ref.builder().isActive(false).build();
@@ -177,17 +177,20 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 					.type("Recharge").build();
 			PaymentType refcom = PaymentType.builder()
 					.type("RefCom").build();
+			PaymentType bonus = PaymentType.builder()
+					.type("Bonus").build();
 			paymentTypeRepository.save(recharge);
 			paymentTypeRepository.save(withdrawal);
 			paymentTypeRepository.save(refcom);
+			paymentTypeRepository.save(bonus);
 		}
 		if(bonusTypeRepository.count() == 0){
-			BonusType mb5 = BonusType.builder().type("mb5").build();
-			BonusType mb10 = BonusType.builder().type("mb10").build();
-			BonusType mb20 = BonusType.builder().type("mb20").build();
-			BonusType mb30 = BonusType.builder().type("mb30").build();
-			BonusType mb50 = BonusType.builder().type("mb50").build();
-			BonusType mb100 = BonusType.builder().type("mb00").build();
+			BonusType mb5 = BonusType.builder().type("mb5").price(50.0).build();
+			BonusType mb10 = BonusType.builder().type("mb10").price(100.0).build();
+			BonusType mb20 = BonusType.builder().type("mb20").price(200.0).build();
+			BonusType mb30 = BonusType.builder().type("mb30").price(300.0).build();
+			BonusType mb50 = BonusType.builder().type("mb50").price(500.0).build();
+			BonusType mb100 = BonusType.builder().type("mb00").price(1000.0).build();
 
 			bonusTypeRepository.save(mb5);
 			bonusTypeRepository.save(mb10);

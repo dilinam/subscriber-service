@@ -25,6 +25,7 @@ public class PackageService {
     private final RefRepository refRepository;
     private final BonusTypeRepository bonusTypeRepository;
     private final UserBonusRepository userBonusRepository;
+    private final AssetsRepository assetsRepository;
 
     public List<Package> getAllPackages() {
         return packageRepository.findAllByIsActive(true);
@@ -54,9 +55,46 @@ public class PackageService {
         }
 
 
-        //setRefToUsers
+        Optional<List<UserRef>> userRefList = userRefRepository.findAllByUser(user);
+        if(userRefList.isPresent()) {
+            for (UserRef uf : userRefList.get()) {
+                if(uf.getLevel() != 0){
+                    uf.setIsActive(true);
+                }
+                User user1 = userRefRepository.findUserByRef(uf.getRef());
+                Assets assets;
+                if (uf.getLevel() == 1) {
+                    assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user1).amount(pkg.getPrice() * 0.1).paymentType(paymentTypeRepository.findById(3).get()).build();
 
+                    if (user1.getMaximumRevenue() > (user1.getTotalRevenue() + assets.getAmount())) {
+                        assetsRepository.save(assets);
+                        user1.setTotalBalance(user1.getTotalBalance() + assets.getAmount());
+                        user1.setTotalRevenue(user1.getTotalRevenue() + assets.getAmount());
+                    }
+                    userRepository.save(user1);
 
+                } else if (uf.getLevel() == 2) {
+                    assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user1).amount(pkg.getPrice() * 0.06).paymentType(paymentTypeRepository.findById(3).get()).build();
+
+                    if (user1.getMaximumRevenue() > (user1.getTotalRevenue() + assets.getAmount())) {
+                        assetsRepository.save(assets);
+                        user1.setTotalBalance(user1.getTotalBalance() + assets.getAmount());
+                        user1.setTotalRevenue(user1.getTotalRevenue() + assets.getAmount());
+                    }
+                    userRepository.save(user1);
+                } else if (uf.getLevel() == 3) {
+                    assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user1).amount(pkg.getPrice() * 0.03).paymentType(paymentTypeRepository.findById(3).get()).build();
+
+                    if (user1.getMaximumRevenue() > (user1.getTotalRevenue() + assets.getAmount())) {
+                        assetsRepository.save(assets);
+                        user1.setTotalBalance(user1.getTotalBalance() + assets.getAmount());
+                        user1.setTotalRevenue(user1.getTotalRevenue() + assets.getAmount());
+                    }
+                    userRepository.save(user1);
+                }
+                userRefRepository.save(uf);
+            }
+        }
         UserPackage userPackage = UserPackage.builder()
             .activePackage(pkg)
             .user(user)

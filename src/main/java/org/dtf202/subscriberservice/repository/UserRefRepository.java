@@ -13,17 +13,22 @@ import java.util.Optional;
 
 public interface UserRefRepository extends JpaRepository<UserRef, Long> {
 
-    List<UserRef> findAllByRef(Ref ref);
+    List<UserRef> findAllByRefAndIsActiveTrue(Ref ref);
 
     Optional<UserRef> findAllByRefAndUser(Ref ref,User user);
     Optional<UserRef> findFirstByRef(Ref ref);
-    Optional<UserRef> findAllByUser(User user);
+    Optional<List<UserRef>> findAllByUser(User user);
 
     Optional<UserRef> findAllByUserAndLevel(User user,Integer level);
-    @Query("Select count(*) from UserRef userRef Where userRef.ref.id = ?1 and userRef.level = ?2" )
+
+    Optional<List<UserRef>> findAllByRefAndLevel(User user,Integer level);
+    @Query("Select count(*) from UserRef userRef Where userRef.ref.id = ?1 and userRef.level = ?2 and userRef.isActive = true " )
     Integer getCountOfRef(Long refId,Integer level);
 
-    List<UserRef> findAllByRefAndLevel(Ref ref,Integer level);
+    List<UserRef> findAllByRefAndLevelAndIsActiveTrue(Ref ref,Integer level);
+
+    @Query("Select userRef.user from UserRef userRef where userRef.ref = ?1 and userRef.level = 0")
+    User findUserByRef(Ref ref);
     @Query("Select COUNT(*) from UserRef userRef Where userRef.user.registeredDateTime > ?1 and userRef.level = ?2 and userRef.ref.id = ?3" )
     Integer findUserREfByDateAndLevelAndCount(LocalDateTime date,Integer Level,Long refId);
 

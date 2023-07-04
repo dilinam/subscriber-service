@@ -1,14 +1,8 @@
 package org.dtf202.subscriberservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.dtf202.subscriberservice.entity.Assets;
-import org.dtf202.subscriberservice.entity.PaymentType;
-import org.dtf202.subscriberservice.entity.RevenueUserPackage;
-import org.dtf202.subscriberservice.entity.User;
-import org.dtf202.subscriberservice.repository.AssetsRepository;
-import org.dtf202.subscriberservice.repository.PaymentTypeRepository;
-import org.dtf202.subscriberservice.repository.RevenueUserPackageRepository;
-import org.dtf202.subscriberservice.repository.UserRepository;
+import org.dtf202.subscriberservice.entity.*;
+import org.dtf202.subscriberservice.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -25,14 +19,17 @@ public class AssetsService {
     private final AssetsRepository assetsRepository;
     private final PaymentTypeRepository paymentTypeRepository;
     private final RevenueUserPackageRepository revenueUserPackageRepository;
+    private final UserBonusRepository userBonusRepository;
+    private final BonusTypeRepository bonusTypeRepository;
     public List<Assets> getAllRecharges(){
         return assetsRepository.findAllByPaymentTypeType("Recharge");
 
     }
-    public List<Assets> getAllWithdrawals(){
-        return assetsRepository.findAllByPaymentTypeType("Withdrawal");
+    public List<Assets> getAllActivityIncome(User user){
+        return assetsRepository.findAllActivityIncome(user);
 
     }
+
     public List<Assets> getAllRechargesByUserId(Long id){
         return assetsRepository.findAllByUserIdAndPaymentTypeType(id,"Recharge");
 
@@ -70,5 +67,18 @@ public class AssetsService {
 
         assetsRepository.save(assets);
     }
+    public void saveBonus (User user,Double amount){
+        Assets assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user).amount(amount).paymentType(paymentTypeRepository.findById(4).get()).build();
+
+        if(user.getMaximumRevenue() > (user.getTotalRevenue()+assets.getAmount())){
+            assetsRepository.save(assets);
+            user.setTotalBalance(user.getTotalBalance()+assets.getAmount());
+            user.setTotalRevenue(user.getTotalRevenue()+assets.getAmount());
+            UserBonus userBonus = UserBonus.builder().bonusType(bonusTypeRepository.findBonusTypeByPrice(amount)).user(user).build();
+            userBonusRepository.save(userBonus);
+        }
+        userRepository.save(user);
+    }
+
 
 }
