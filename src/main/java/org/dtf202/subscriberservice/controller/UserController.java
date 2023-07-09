@@ -49,8 +49,8 @@ public class UserController {
             User user = (User) authentication.getPrincipal();
             return ResponseEntity.ok(userService.getUserPackageById(user));
         } catch(Exception ex) {
-            return ResponseEntity.notFound().build();
-//            return ResponseEntity.ok().build();
+//            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().build();
         }
     }
 
@@ -166,6 +166,15 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/getCardDetailsByUser/{userId}")
+    public ResponseEntity<CardMgt>getCardDetailsByUser(@PathVariable Long userId) {
+        try {
+            return ResponseEntity.ok(userService.getCardDetailsUser(userService.getUserById(userId)));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping("/putCardDatails")
     public ResponseEntity<?> putCardDatails(@RequestBody CardMgt cardMgt,Authentication authentication) {
         try {

@@ -152,7 +152,7 @@ public class UserService {
     }
 
     public CardMgt getCardDetailsUser(User user){
-        return cardMgtRepository.findAllByUser(user);
+        return cardMgtRepository.findByUser(user);
     }
 
     public void saveCard(CardMgt cardMgt){
