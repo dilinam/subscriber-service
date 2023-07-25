@@ -25,4 +25,6 @@ public class UserRef {
 
     private Integer level;
 
+    private Boolean isActive;
+
 }

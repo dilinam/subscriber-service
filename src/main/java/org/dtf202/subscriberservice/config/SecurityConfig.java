@@ -31,7 +31,7 @@ public class SecurityConfig {
             .requestMatchers("/api/Assets/**")
              .hasAnyAuthority( "USER")
             .requestMatchers("/api/users/package/**")
-            .hasAnyAuthority( "USER")
+            .hasAnyAuthority( "USER", "ADMIN")
             .requestMatchers("/api/adminAction/**")
             .hasAnyAuthority("ADMIN")
                 .requestMatchers("/api/users/**")

@@ -61,6 +61,13 @@ public class UserService {
         User user = getUserById(editingUser.getId());
         user.setFirstName(editingUser.getFirstName());
         user.setLastName(editingUser.getLastName());
+        user.setAddress(editingUser.getAddress());
+        user.setGender(editingUser.getGender());
+        user.setDob(editingUser.getDob());
+        user.setPhone(editingUser.getPhone());
+        user.setZipCode(editingUser.getZipCode());
+        user.setCountry(editingUser.getCountry());
+        user.setCity(editingUser.getCity());
         userRepository.save(user);
     }
     public Double getTotalBalRev(User user) throws Exception {
@@ -74,22 +81,24 @@ public class UserService {
         Ref ref = userRef.get().getRef();
         Long refId = ref.getId();
         Integer count =  userRefRepository.getCountOfRef(refId,1);
-        if(count > 1 && userBonusRepository.findAllByUserAndBonusType(user.get(),bonusTypeRepository.findAllByType("10")).isEmpty()){
-            return 100;
-         }else{
-            return 0;
-        }
+        System.out.println(count);
+        return count;
 
     }
+
     public List<UserRef> getRefUsers(User user){
         Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
         Ref ref = userRef.get().getRef();
 
-        List<UserRef> userrefs= userRefRepository.findAllByRef(ref);
+        List<UserRef> userrefs= userRefRepository.findAllByRefAndIsActiveTrue(ref);
 
         return userrefs;
 
 
+    }
+    public List<UserBonus> getuserBouns(User user){
+        Optional<List<UserBonus>> userBonusList = userBonusRepository.findAllByUser(user);
+        return userBonusList.get();
     }
     public Long getRefID(User user){
         Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
@@ -108,7 +117,7 @@ public class UserService {
     public List<UserRef> getAllUserRefBylevel(User user,Integer level){
         Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
         Ref ref = userRef.get().getRef();
-        List<UserRef> userRefList = userRefRepository.findAllByRefAndLevel(ref,level);
+        List<UserRef> userRefList = userRefRepository.findAllByRefAndLevelAndIsActiveTrue(ref,level);
         return userRefList;
 
     }
@@ -124,9 +133,26 @@ public class UserService {
         Ref ref = userRef.get().getRef();
         return userRefRepository.findUserREfByDateAndLevelAndCountPackage(localDateTime.minusDays(1),level,ref.getId());
     }
+    public Double getAllWithdrawalsByDate(Integer level,User user){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Optional<UserRef> userRef = userRefRepository.findAllByUserAndLevel(user,0);
+        Ref ref = userRef.get().getRef();
+        Optional<List<UserRef>> usersList = Optional.ofNullable(userRefRepository.findAllByRefAndLevelAndIsActiveTrue(ref, level));
+        Double count = 0.0;
+
+        for (UserRef uf:usersList.get() ) {
+            Optional<Double> widthDrawAmount= assetsRepository.findAllByDateTimeGreaterThanEqualAndPaymentTypeType(localDateTime.minusDays(1),uf.getUser());
+            if(!widthDrawAmount.isEmpty()){
+                count  = count + widthDrawAmount.get();
+            }
+
+        }
+        return Math.abs(count);
+
+    }
 
     public CardMgt getCardDetailsUser(User user){
-        return cardMgtRepository.findAllByUser(user);
+        return cardMgtRepository.findByUser(user);
     }
 
     public void saveCard(CardMgt cardMgt){

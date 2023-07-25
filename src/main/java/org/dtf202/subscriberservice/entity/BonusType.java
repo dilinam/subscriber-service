@@ -20,4 +20,6 @@ public class BonusType {
     Long id;
 
     String type;
+
+    Double price;
 }

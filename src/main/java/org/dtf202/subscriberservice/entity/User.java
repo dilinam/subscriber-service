@@ -36,6 +36,14 @@ public class User implements UserDetails {
     @NotBlank(message = "Last Name is required")
     private String lastName;
 
+    private String gender;
+    private String dob;
+    private String phone;
+    private String address;
+    private String city;
+    private String zipCode;
+    private String country;
+
     @NotBlank(message = "Email is required")
     @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     @Column(unique = true)

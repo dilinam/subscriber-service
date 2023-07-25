@@ -8,11 +8,9 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.dto.RefCountBYLevel;
-import org.dtf202.subscriberservice.entity.CardMgt;
-import org.dtf202.subscriberservice.entity.User;
-import org.dtf202.subscriberservice.entity.UserPackage;
-import org.dtf202.subscriberservice.entity.UserRef;
+import org.dtf202.subscriberservice.entity.*;
 import org.dtf202.subscriberservice.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -51,7 +49,8 @@ public class UserController {
             User user = (User) authentication.getPrincipal();
             return ResponseEntity.ok(userService.getUserPackageById(user));
         } catch(Exception ex) {
-            return ResponseEntity.notFound().build();
+//            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().build();
         }
     }
 
@@ -61,8 +60,8 @@ public class UserController {
             userService.editUser(editingUser);
             return ResponseEntity.ok().build();
         } catch(Exception ex) {
-            return ResponseEntity.notFound().build();
-        }
+        }            return new ResponseEntity<>("", HttpStatus.BAD_REQUEST);
+
     }
 
     @PutMapping("/change-status/{id}")
@@ -128,6 +127,15 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/getuserBonus")
+    public ResponseEntity<List<UserBonus>> getUserBonus(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getuserBouns(user));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
     @GetMapping("/getlevelUserRef/{level}")
     public ResponseEntity<List<UserRef>> getlevelUserRef(Authentication authentication,@PathVariable Integer level) {
         try {
@@ -158,6 +166,15 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/getCardDetailsByUser/{userId}")
+    public ResponseEntity<CardMgt>getCardDetailsByUser(@PathVariable Long userId) {
+        try {
+            return ResponseEntity.ok(userService.getCardDetailsUser(userService.getUserById(userId)));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping("/putCardDatails")
     public ResponseEntity<?> putCardDatails(@RequestBody CardMgt cardMgt,Authentication authentication) {
         try {
@@ -165,6 +182,15 @@ public class UserController {
             cardMgt.setUser(user);
             userService.saveCard(cardMgt);
             return ResponseEntity.ok().build();
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/getAllWithdrawalBYDate/{level}")
+    public ResponseEntity<Double> getAllEithdrawallByDate(@PathVariable int level,Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(userService.getAllWithdrawalsByDate(level,user));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }

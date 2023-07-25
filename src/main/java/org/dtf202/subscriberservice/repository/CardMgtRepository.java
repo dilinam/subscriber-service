@@ -6,5 +6,5 @@ import org.dtf202.subscriberservice.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CardMgtRepository extends JpaRepository<CardMgt, Long> {
-    CardMgt findAllByUser(User user);
+    CardMgt findByUser(User user);
 }

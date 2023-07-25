@@ -88,6 +88,9 @@ public class AdminActionService {
         userRepository.save(user);
         assetsRepository.save(asset);
     }
+    public void rejectAsset(Assets asset){
+        assetsRepository.delete(asset);
+    }
 
     public void saveAppConfig(AppConfig appConfig) {
         appConfigRepository.save(appConfig);

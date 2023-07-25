@@ -65,6 +65,7 @@ public class AuthService {
         user.setIsActive(true);
         user.setRegisteredDateTime(LocalDateTime.now());
         user.setTotalBalance(0.0);
+        user.setTotalRevenue(0.0);
         user.setMaximumRevenue(0.0);
 
         String verificationToken = stringHelpers.generateRandomStringUsingEmail(user.getEmail());
@@ -106,15 +107,18 @@ public class AuthService {
             if(user.getParentRef() != null) {
                 Optional<Ref> ref1 = refRepository.findById(user.getParentRef());
                 if(ref1.isPresent()){
-                    UserRef userRef1 = userRefRepository.findByRef(ref1.get()).get();
-                    UserRef userRefLevel1 = UserRef.builder().user(user).ref(ref1.get()).level(1).build();
+                    UserRef userRef1 = userRefRepository.findFirstByRef(ref1.get()).get();
+                    UserRef userRefLevel1 = UserRef.builder().user(user).ref(ref1.get()).level(1).isActive(false).build();
                     userRefRepository.save(userRefLevel1);
                     Optional<UserRef> userRef2 = userRefRepository.findAllByUserAndLevel(userRef1.getUser(),1);
                     if (userRef2.isPresent()){
-                        UserRef userRefLevel2 =UserRef.builder().user(user).ref(userRef2.get().getRef()).level(2).build();
+                        UserRef userRefLevel2 =UserRef.builder().user(user).ref(userRef2.get().getRef()).level(2).isActive(false).build();
                         userRefRepository.save(userRefLevel2);
-                        Optional<UserRef> userRef3 = userRefRepository.findAllByUserAndLevel(userRef2.get().getUser(),1);
-                        userRef3.ifPresent(userRef4 -> UserRef.builder().user(user).ref(userRef4.getRef()).level(3).build());
+                        Optional<UserRef> userRef3 = userRefRepository.findAllByUserAndLevel(userRef2.get().getUser(),2);
+                        if(userRef3.isPresent()){
+                            UserRef userRefLevel3 = UserRef.builder().user(user).ref(userRef3.get().getRef()).level(3).isActive(false).build();
+                            userRefRepository.save(userRefLevel3);
+                        }
                     }}
             }
             ref.setIsActive(true);

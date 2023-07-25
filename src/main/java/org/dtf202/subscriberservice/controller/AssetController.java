@@ -19,24 +19,17 @@ import java.util.List;
 public class AssetController {
     private final AssetsService assetsService;
 
-//    @GetMapping("/Recharges")
-//    public ResponseEntity<List<Assets>> getAllRecharges() {
-//        try {
-//            return ResponseEntity.ok(assetsService.getAllRecharges());
-//        } catch(Exception ex) {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-    @GetMapping("/Withdrawals")
-    public ResponseEntity<List<Assets>> getAllWithdrawals() {
+    @GetMapping("/ActivityIncome")
+    public ResponseEntity<List<Assets>> getAllWithdrawalByUserId(Authentication authentication) {
         try {
-            return ResponseEntity.ok(assetsService.getAllWithdrawals());
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(assetsService.getAllActivityIncome(user));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }
     }
     @GetMapping("/Recharge")
-    public ResponseEntity<List<Assets>> getAllRechargesByUserId(@PathVariable Authentication authentication) {
+    public ResponseEntity<List<Assets>> getAllRechargesByUserId(Authentication authentication) {
         try {
             User user = (User) authentication.getPrincipal();
             return ResponseEntity.ok(assetsService.getAllRechargesByUserId(user.getId()));
@@ -44,7 +37,7 @@ public class AssetController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/Withdrawals/")
+    @GetMapping("/Withdrawals")
     public ResponseEntity<List<Assets>> getAllWithdrawalsByUserId(Authentication authentication) {
         try {
             User user = (User) authentication.getPrincipal();
@@ -82,9 +75,21 @@ public class AssetController {
     }
 
     @PostMapping("/{id}/{amount}")
-    public ResponseEntity<?> AddNewAsset(@Valid @RequestBody User user,@PathVariable Integer id,@PathVariable Double amount){
+    public ResponseEntity<?> AddNewAsset(@Valid @PathVariable Integer id,@PathVariable Double amount,Authentication authentication){
         try {
+            User user = (User) authentication.getPrincipal();
             assetsService.save(user,id,amount);
+            return ResponseEntity.ok().build();
+        } catch(Exception ex) {
+            System.out.println(ex);
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PostMapping("/Bonus/{amount}")
+    public ResponseEntity<?> AddNewAsset(@Valid @PathVariable Double amount,Authentication authentication){
+        try {
+            User user = (User) authentication.getPrincipal();
+            assetsService.saveBonus(user,amount);
             return ResponseEntity.ok().build();
         } catch(Exception ex) {
             System.out.println(ex);
