@@ -70,7 +70,7 @@ public class AssetsService {
     public void saveBonus (User user,Double amount){
         Assets assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user).amount(amount).paymentType(paymentTypeRepository.findById(4).get()).build();
 
-        if(user.getMaximumRevenue() > (user.getTotalRevenue()+assets.getAmount())){
+        if(user.getMaximumRevenue()*2 > (user.getTotalRevenue()+assets.getAmount())){
             assetsRepository.save(assets);
             user.setTotalBalance(user.getTotalBalance()+assets.getAmount());
             user.setTotalRevenue(user.getTotalRevenue()+assets.getAmount());

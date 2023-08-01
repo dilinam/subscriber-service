@@ -37,20 +37,27 @@ public class PackageService {
     @Transactional
     public void createUserPackage(int id,User user) throws Exception {
 
-        Package pkg = packageRepository.findById(id).orElseThrow(() -> new Exception("Package not found"));
-        if(pkg.getPrice() > user.getTotalBalance()) {
-            throw new Exception("Insufficient Balance");
-        }
+        double refCommission = 0.0;
         Optional<UserPackage> uPack = userPackageRepository.findAllByUserAndStatusIsTrue(user);
+        Package pkg = packageRepository.findById(id).orElseThrow(() -> new Exception("Package not found"));
+
         if (uPack.isPresent()){
+            refCommission = pkg.getPrice() - uPack.get().getActivePackage().getPrice();
+            if(refCommission > user.getTotalBalance()) {
+                throw new Exception("Insufficient Balance");
+            }
             uPack.get().setStatus(false);
-            user.setTotalBalance(user.getTotalBalance() - pkg.getPrice() + uPack.get().getActivePackage().getPrice());
-            user.setMaximumRevenue(pkg.getPrice()*4);
+            user.setTotalBalance(user.getTotalBalance() - refCommission);
+            user.setMaximumRevenue(pkg.getPrice()*2);
             userPackageRepository.save(uPack.get());
             userRepository.save(user);
         }else{
+            if(pkg.getPrice() > user.getTotalBalance()) {
+                throw new Exception("Insufficient Balance");
+            }
+            refCommission = pkg.getPrice();
             user.setTotalBalance(user.getTotalBalance() - pkg.getPrice());
-            user.setMaximumRevenue(pkg.getPrice()*4);
+            user.setMaximumRevenue(pkg.getPrice()*2);
             userRepository.save(user);
         }
 
@@ -64,9 +71,9 @@ public class PackageService {
                 User user1 = userRefRepository.findUserByRef(uf.getRef());
                 Assets assets;
                 if (uf.getLevel() == 1) {
-                    assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user1).amount(pkg.getPrice() * 0.1).paymentType(paymentTypeRepository.findById(3).get()).build();
+                    assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user1).amount(refCommission * 0.1).paymentType(paymentTypeRepository.findById(3).get()).build();
 
-                    if (user1.getMaximumRevenue() > (user1.getTotalRevenue() + assets.getAmount())) {
+                    if (user1.getMaximumRevenue()*2 > (user1.getTotalRevenue() + assets.getAmount())) {
                         assetsRepository.save(assets);
                         user1.setTotalBalance(user1.getTotalBalance() + assets.getAmount());
                         user1.setTotalRevenue(user1.getTotalRevenue() + assets.getAmount());
@@ -74,18 +81,18 @@ public class PackageService {
                     userRepository.save(user1);
 
                 } else if (uf.getLevel() == 2) {
-                    assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user1).amount(pkg.getPrice() * 0.06).paymentType(paymentTypeRepository.findById(3).get()).build();
+                    assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user1).amount(refCommission * 0.06).paymentType(paymentTypeRepository.findById(3).get()).build();
 
-                    if (user1.getMaximumRevenue() > (user1.getTotalRevenue() + assets.getAmount())) {
+                    if (user1.getMaximumRevenue()*2 > (user1.getTotalRevenue() + assets.getAmount())) {
                         assetsRepository.save(assets);
                         user1.setTotalBalance(user1.getTotalBalance() + assets.getAmount());
                         user1.setTotalRevenue(user1.getTotalRevenue() + assets.getAmount());
                     }
                     userRepository.save(user1);
                 } else if (uf.getLevel() == 3) {
-                    assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user1).amount(pkg.getPrice() * 0.03).paymentType(paymentTypeRepository.findById(3).get()).build();
+                    assets = Assets.builder().dateTime(LocalDateTime.now()).isAccepted(true).user(user1).amount(refCommission * 0.03).paymentType(paymentTypeRepository.findById(3).get()).build();
 
-                    if (user1.getMaximumRevenue() > (user1.getTotalRevenue() + assets.getAmount())) {
+                    if (user1.getMaximumRevenue()*2 > (user1.getTotalRevenue() + assets.getAmount())) {
                         assetsRepository.save(assets);
                         user1.setTotalBalance(user1.getTotalBalance() + assets.getAmount());
                         user1.setTotalRevenue(user1.getTotalRevenue() + assets.getAmount());

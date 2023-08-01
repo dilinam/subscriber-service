@@ -48,5 +48,26 @@ public class AuthController {
 
         return ResponseEntity.ok(authService.authenticate(authenticationRequest));
     }
+    @PostMapping("/resetPasswordVerify/{email}")
+    public ResponseEntity<?> resetPassword(@PathVariable String email) {
+        try{
+            authService.resetPasswordVerify(email);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("email", "Email doesn't exists"));
+        }catch (Exception ex) {
+            return ResponseEntity.badRequest().body(Map.of("userRef", "User ref not exists"));
+        }
+    }
+    @PostMapping("/reset-password/{verificationToken}")
+    public ResponseEntity<AuthenticationResponse> emailVerification(@PathVariable String verificationToken,@Valid @RequestBody String password) {
+
+        try {
+            authService.resetPassword(verificationToken,password);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
 }

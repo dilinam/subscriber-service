@@ -28,12 +28,16 @@ public class RevenueScheduler {
         Optional<List<UserPackage>> userPkList= userPackageRepository.findAllByStatusIsTrue();
         if(userPkList.isPresent()){
         for (UserPackage usPk: userPkList.get()) {
-            RevenueUserPackage revenueUserPackage = RevenueUserPackage.builder().user(usPk.getUser()).aPackage(usPk.getActivePackage()).revenue(usPk.getActivePackage().getPrice() * 0.01).dateTime(LocalDateTime.now()).build();
             User user = usPk.getUser();
-            user.setTotalBalance(usPk.getUser().getTotalBalance() + usPk.getActivePackage().getPrice() * 0.01);
+            if(user.getMaximumRevenue() > user.getTotalDailyRevenue() + usPk.getActivePackage().getPrice() * 0.005 ){
+            RevenueUserPackage revenueUserPackage = RevenueUserPackage.builder().user(usPk.getUser()).aPackage(usPk.getActivePackage()).revenue(usPk.getActivePackage().getPrice() * 0.005).dateTime(LocalDateTime.now()).build();
+
+            user.setTotalBalance(usPk.getUser().getTotalDailyRevenue() + usPk.getActivePackage().getPrice() * 0.005);
+            user.setTotalDailyRevenue( usPk.getUser().getTotalDailyRevenue() + usPk.getActivePackage().getPrice() * 0.005);
+            user.setTotalRevenue(usPk.getUser().getTotalRevenue()  +  usPk.getActivePackage().getPrice() * 0.005);
 
             revenueUserPackageRepository.save(revenueUserPackage);
-            userRepository.save(user);
+            userRepository.save(user);}
 
         }
         }

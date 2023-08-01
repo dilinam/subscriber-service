@@ -167,7 +167,7 @@ public class UserController {
         }
     }
     @PutMapping("/putCardDatails")
-    public ResponseEntity<?> putCardDatails(@RequestBody CardMgt cardMgt,Authentication authentication) {
+    public ResponseEntity<?> putCardDatails(@Valid @RequestBody CardMgt cardMgt,Authentication authentication) {
         try {
             User user = (User) authentication.getPrincipal();
             cardMgt.setUser(user);
@@ -186,6 +186,16 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/getCardDetailsByUser/{userID}")
+    public ResponseEntity<CardMgt> getAllEithdrawallByDate(@PathVariable long userID) {
+        try {
+            User user = userService.getUserById(userID);
+            return ResponseEntity.ok(userService.getCardDetailsUser(user));
+        } catch(Exception ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 
 

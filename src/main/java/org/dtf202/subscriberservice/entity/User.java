@@ -58,6 +58,7 @@ public class User implements UserDetails {
     private Double totalBalance;
     private Double maximumRevenue;
     private Double totalRevenue;
+    private Double totalDailyRevenue;
     private Boolean isDeleted = false;
     private Boolean isActive = true;
     @ManyToOne

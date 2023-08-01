@@ -49,6 +49,8 @@ public class AuthService {
 
     private final static Map<String, User> UNVERIFIED_USERS = new HashMap<>();
 
+    private final static Map<String, User> RESET_PASSWORD_USERS = new HashMap<>();
+
     public void register(User user) throws Exception {
 
         if(adminActionService.getAppConfig("DISABLE_REG_AND_NEW_PKG").getValue().equalsIgnoreCase("TRUE")) {
@@ -143,5 +145,41 @@ public class AuthService {
         User user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).role(user.getRole().getName()).build();
+    }
+    public void resetPasswordVerify(String email) throws Exception {
+        System.out.println(email);
+        if(userRepository.findByEmail(email).isPresent()){
+            User user =  userRepository.findByEmail(email).get();
+            String resetToken = stringHelpers.generateRandomStringUsingEmail(user.getEmail());
+            RESET_PASSWORD_USERS.put(resetToken, user);
+            Thread emailThread = new Thread(() -> {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setFrom(noReplyEMail);
+                message.setTo(user.getEmail());
+                message.setSubject("Dream the Future | Password Reset Verification");
+                message.setText(
+                        "Use the following link to Verify your email. \n\n" +
+                                appDomain + "/reset-password-verification?resetToken=" + resetToken
+
+                );
+                emailSender.send(message);
+            });
+            emailThread.start();
+        }else{
+            throw new IllegalArgumentException();
+        }
+        // send activation link
+
+    }
+    public void resetPassword(String verificationToken,String password) throws Exception {
+        User user = RESET_PASSWORD_USERS.remove(verificationToken);
+
+        if(user == null) {
+            throw new Exception("Invalid Token");
+        }
+        password = password.substring(0,password.length()-1);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+
     }
 }
