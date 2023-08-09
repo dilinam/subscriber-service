@@ -20,6 +20,7 @@ public class RevenueScheduler {
     private final RevenueUserPackageRepository revenueUserPackageRepository;
     private final UserRepository userRepository;
     private final UserPackageRepository userPackageRepository;
+    private final AuthService authService;
 
     @Scheduled(cron = "0 29 13 * * MON,TUE,WED,THU,FRI")
 //    @Scheduled(cron = "1 * * * * *")
@@ -41,9 +42,13 @@ public class RevenueScheduler {
 
         }
         }
-
-
-
         System.out.println("hello"+dt.now());
+    }
+
+    @Scheduled(cron = "0 0 0 1 * *")
+//    @Scheduled(cron = "1 * * * * *")
+    public void clearMaps(){
+        authService.clearHashMaps();
+        System.out.println("All maps are clear");
     }
 }

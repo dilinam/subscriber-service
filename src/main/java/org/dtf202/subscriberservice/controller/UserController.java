@@ -195,17 +195,4 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/getCardDetailsByUser/{userID}")
-    public ResponseEntity<CardMgt> getAllEithdrawallByDate(@PathVariable long userID) {
-        try {
-            User user = userService.getUserById(userID);
-            return ResponseEntity.ok(userService.getCardDetailsUser(user));
-        } catch(Exception ex) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-
-
-
 }

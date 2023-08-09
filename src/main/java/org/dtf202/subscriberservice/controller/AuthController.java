@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.dto.AuthenticationRequest;
 import org.dtf202.subscriberservice.dto.AuthenticationResponse;
 import org.dtf202.subscriberservice.entity.AppConfig;
+import org.dtf202.subscriberservice.entity.Package;
 import org.dtf202.subscriberservice.entity.User;
 import org.dtf202.subscriberservice.service.AdminActionService;
 import org.dtf202.subscriberservice.service.AuthService;
@@ -67,6 +68,14 @@ public class AuthController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+    @GetMapping("/countOfRef")
+    public ResponseEntity<Long> getCountOfRef() {
+        try {
+            return ResponseEntity.ok(authService.getMaxID());
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
         }
     }
 

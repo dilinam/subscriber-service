@@ -182,4 +182,12 @@ public class AuthService {
         userRepository.save(user);
 
     }
+    public Long getMaxID(){
+        return refRepository.maxID();
+    }
+    public void clearHashMaps(){
+        RESET_PASSWORD_USERS.clear();
+        UNVERIFIED_USERS.clear();
+    }
+
 }

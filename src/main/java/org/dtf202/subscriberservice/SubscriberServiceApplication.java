@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.dtf202.subscriberservice.entity.*;
 import org.dtf202.subscriberservice.entity.Package;
 import org.dtf202.subscriberservice.repository.*;
+import org.dtf202.subscriberservice.service.AuthService;
 import org.dtf202.subscriberservice.service.RevenueScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -45,7 +46,6 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 
 	@Override
 	public void run(final String... args) throws Exception {
-
 		if(appConfigRepository.findByProperty("DISABLE_REG_AND_NEW_PKG").isEmpty()) {
 			AppConfig appConfig = new AppConfig();
 			appConfig.setProperty("DISABLE_REG_AND_NEW_PKG");
