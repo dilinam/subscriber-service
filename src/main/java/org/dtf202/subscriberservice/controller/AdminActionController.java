@@ -85,9 +85,4 @@ public class AdminActionController {
         }
     }
 
-    @PutMapping("/app-config")
-    public void saveAppConfig(@RequestBody AppConfig appConfig) {
-        adminActionService.saveAppConfig(appConfig);
-    }
-
 }

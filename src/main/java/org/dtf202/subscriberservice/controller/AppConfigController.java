@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.dtf202.subscriberservice.entity.AppConfig;
 import org.dtf202.subscriberservice.service.AdminActionService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +20,13 @@ public class AppConfigController {
         } catch (Exception ex) {
             return ResponseEntity.notFound().build();
         }
+    }
+    @PostMapping("/{value}")
+    public void saveAppConfig(@PathVariable String value) throws Exception {
+        System.out.println("...");
+        AppConfig appConfig = adminActionService.getAppConfig("DISABLE_REG_AND_NEW_PKG");
+        appConfig.setValue(value);
+        adminActionService.saveAppConfig(appConfig);
     }
 
 }

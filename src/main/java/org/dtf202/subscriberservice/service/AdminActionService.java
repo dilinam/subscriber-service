@@ -96,4 +96,5 @@ public class AdminActionService {
         appConfigRepository.save(appConfig);
     }
 
+
 }
