@@ -78,7 +78,7 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 				.isActive(true)
 				.role(roleUser)
 				.registeredDateTime(LocalDateTime.now())
-				.totalBalance(0.0).totalRevenue(0.0).maximumRevenue(0.0)
+				.totalBalance(0.0).totalRevenue(0.0).maximumRevenue(0.0).totalDailyRevenue(0.0)
 				.build();
 
 			Ref ref = Ref.builder().isActive(false).build();

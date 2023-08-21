@@ -66,6 +66,7 @@ public class AuthService {
         user.setIsDeleted(false);
         user.setIsActive(true);
         user.setRegisteredDateTime(LocalDateTime.now());
+        user.setTotalDailyRevenue(0.0);
         user.setTotalBalance(0.0);
         user.setTotalRevenue(0.0);
         user.setMaximumRevenue(0.0);

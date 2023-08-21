@@ -33,7 +33,7 @@ public class RevenueScheduler {
             if(user.getMaximumRevenue() > user.getTotalDailyRevenue() + usPk.getActivePackage().getPrice() * 0.005 ){
             RevenueUserPackage revenueUserPackage = RevenueUserPackage.builder().user(usPk.getUser()).aPackage(usPk.getActivePackage()).revenue(usPk.getActivePackage().getPrice() * 0.005).dateTime(LocalDateTime.now()).build();
 
-            user.setTotalBalance(usPk.getUser().getTotalDailyRevenue() + usPk.getActivePackage().getPrice() * 0.005);
+            user.setTotalBalance(usPk.getUser().getTotalBalance()+ usPk.getActivePackage().getPrice() * 0.005);
             user.setTotalDailyRevenue( usPk.getUser().getTotalDailyRevenue() + usPk.getActivePackage().getPrice() * 0.005);
             user.setTotalRevenue(usPk.getUser().getTotalRevenue()  +  usPk.getActivePackage().getPrice() * 0.005);
 
