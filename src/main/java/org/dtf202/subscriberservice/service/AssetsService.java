@@ -38,10 +38,11 @@ public class AssetsService {
         return assetsRepository.findAllByUserIdAndPaymentTypeType(id,"Withdrawal");
 
     }
-    public List<RevenueUserPackage> getAllRevenueByDate(long timestamp,User user){
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), TimeZone.getDefault().toZoneId());
+    public List<RevenueUserPackage> getAllRevenueByDate(long startTimestamp, long endTimestamp,User user){
+        LocalDateTime startLocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(startTimestamp), TimeZone.getDefault().toZoneId());
+        LocalDateTime endLocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(endTimestamp), TimeZone.getDefault().toZoneId());
 
-        List<RevenueUserPackage> rev = revenueUserPackageRepository.findAllByUserAndDateTimeGreaterThanEqual(user,localDateTime);
+        List<RevenueUserPackage> rev = revenueUserPackageRepository.findAllByUserAndDateTimeBetween(user,startLocalDateTime, endLocalDateTime);
 
         return rev;
 

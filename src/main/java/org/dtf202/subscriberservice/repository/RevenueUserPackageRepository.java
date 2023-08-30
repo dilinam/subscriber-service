@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface RevenueUserPackageRepository extends JpaRepository<RevenueUserPackage, Integer> {
 
-    List<RevenueUserPackage> findAllByUserAndDateTimeGreaterThanEqual(User user, LocalDateTime timestamp);
+    List<RevenueUserPackage> findAllByUserAndDateTimeBetween(User user, LocalDateTime startTimestamp, LocalDateTime endTimestamp);
 
     @Query("Select sum(rup.revenue) from RevenueUserPackage rup where rup.user = ?1")
     Double findSumofRev(User user);

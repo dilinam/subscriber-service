@@ -64,11 +64,12 @@ public class AssetController {
         }
     }
 
-    @GetMapping("/Revenue/{timestamp}")
-    public ResponseEntity<List<RevenueUserPackage>> getAllRevenue(@PathVariable long timestamp, Authentication authentication) {
+    @GetMapping("/Revenue/{startTimestamp}/{endTimestamp}")
+    public ResponseEntity<List<RevenueUserPackage>> getAllRevenue(@PathVariable long startTimestamp, @PathVariable long endTimestamp,
+                                                                  Authentication authentication) {
         try {
             User user = (User) authentication.getPrincipal();
-            return ResponseEntity.ok(assetsService.getAllRevenueByDate(timestamp,user));
+            return ResponseEntity.ok(assetsService.getAllRevenueByDate(startTimestamp, endTimestamp,user));
         } catch(Exception ex) {
             return ResponseEntity.notFound().build();
         }
