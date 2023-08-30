@@ -60,13 +60,13 @@ public class SubscriberServiceApplication implements CommandLineRunner {
 			User userAdmin = User.builder()
 				.firstName("Test")
 				.lastName("Admin")
-				.email("testadmin@gmail.com")
+				.email("rashidahmed1dtf@gmail.com")
 				.password(passwordEncoder.encode("1234"))
 				.isDeleted(false)
 				.isActive(true)
 				.role(roleAdmin)
 				.registeredDateTime(LocalDateTime.now())
-				.totalBalance(0.0)
+				.totalBalance(0.0).totalRevenue(0.0).maximumRevenue(0.0).totalDailyRevenue(0.0)
 				.build();
 
 			User user = User.builder()
